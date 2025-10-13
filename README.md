@@ -36,7 +36,6 @@ This section lists any major frameworks/libraries used to bootstrap this project
 <a href="https://github.com/L1ttl3G4m3r/TechTrack/contributors">
   <img src="./ReadMeImages/developer.png" alt="all developers" />
 </a>
-Kaylee Hoek
 
 <p align="right"><a href="#table-of-contents">Back to Top ⬆️</a></p>
 
