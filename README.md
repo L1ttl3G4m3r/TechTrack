@@ -4,9 +4,11 @@
 <br>
 
 <!-- Project title-->
+
 # Project Tech Track
 
 ## Table of Contents
+
 1. [About](#about)
 2. [Built With](#built-with)
 3. [Developer](#developer)
@@ -24,15 +26,15 @@ I am making a visual data visualisation with real time API integration.
 
 This section lists any major frameworks/libraries used to bootstrap this project.
 
-* HTML
-* JavaScript
+- HTML
+- JavaScript
 
 <p align="right"><a href="#table-of-contents">Back to Top ⬆️</a></p>
 
 ## Developer
 
-<a href="https://github.com/L1ttl3G4m3r/Blok-Tech/contributors">
-  <img src="https://github.com/user-attachments/assets/c6bb56ff-0e88-4e87-96a0-202d1629e354" alt="all developers" />
+<a href="https://github.com/L1ttl3G4m3r/TechTrack/contributors">
+  <img src="./ReadMeImages/developer.png" alt="all developers" />
 </a>
 Kaylee Hoek
 
@@ -40,7 +42,7 @@ Kaylee Hoek
 
 ## Acknowledgments
 
-* [example](example)
+- [example](example)
 
 <p align="right"><a href="#table-of-contents">Back to Top ⬆️</a></p>
 
@@ -53,4 +55,3 @@ Kaylee Hoek (Back-end) - kaylee.hoek@hva.nl
 - [MIT License](./LICENSE.txt)
 
 <p align="right"><a href="#table-of-contents">Back to Top ⬆️</a></p>
-
