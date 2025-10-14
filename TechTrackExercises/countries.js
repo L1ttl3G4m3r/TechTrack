@@ -1321,7 +1321,7 @@ southAsianPopulation = southAsianCountries.reduce((totalPopulation, element) => 
 // const southAsianMaxLifeExpectancy = Math.max(...southAsianCountries.map((country) => country.lifeExpectancy));
 southAsianMaxLifeExpectancy = southAsianCountries.reduce((maxLifeExp, element) => Math.max(maxLifeExp, element.lifeExpectancy), 0);
 
-//one statement:
+// repeat for sub-Saharan Africa and the Americas
 // southAsianMaxLifeExpectancy = countries.map(normalizeCountry)
 //     .filter(entry => entry.region === "South Asia")
 //     .reduce((maxLifeExp, element) => Math.max(maxLifeExp, element.lifeExpectancy), 0)
