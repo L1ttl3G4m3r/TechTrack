@@ -1294,7 +1294,12 @@ function normalizeCountry(myCountry) {
 }
 
 // format array countries
-normalizedCountries = countries.map(normalizeCountry);
+console.log(
+  countries
+    .map(normalizeCountry)
+    .filter((country) => country.region == "South Asia")
+    .reduce((totalPopulation, element) => totalPopulation + element.population, 0)
+);
 
 // normalizedCountries = countries.map((myCountry) => {
 //   return {
@@ -1309,17 +1314,17 @@ normalizedCountries = countries.map(normalizeCountry);
 // Fill array southAsianCountries with  the objects of array countries representing countries in South Asia
 //
 // const southAsianCountries = countries.filter((country) => country.region === "South Asia");
-southAsianCountries = normalizedCountries.filter((entry) => entry.region === "South Asia");
+// southAsianCountries = normalizedCountries.filter((entry) => entry.region === "South Asia");
 
 // calculate the total population of South Asia
 // southAsianPopulation =
 // const southAsianPopulation = southAsianCountries.reduce((total, country) => total + country.population, 0);
-southAsianPopulation = southAsianCountries.reduce((totalPopulation, element) => totalPopulation + element.population, 0);
+// southAsianPopulation = southAsianCountries.reduce((totalPopulation, element) => totalPopulation + element.population, 0);
 
 // calculate the maximum life expectancy of a country in South Asia
 // soutAsianMaxLifeExpectancy =
 // const southAsianMaxLifeExpectancy = Math.max(...southAsianCountries.map((country) => country.lifeExpectancy));
-southAsianMaxLifeExpectancy = southAsianCountries.reduce((maxLifeExp, element) => Math.max(maxLifeExp, element.lifeExpectancy), 0);
+// southAsianMaxLifeExpectancy = southAsianCountries.reduce((maxLifeExp, element) => Math.max(maxLifeExp, element.lifeExpectancy), 0);
 
 // repeat for sub-Saharan Africa and the Americas
 // southAsianMaxLifeExpectancy = countries.map(normalizeCountry)
@@ -1335,6 +1340,7 @@ southAsianMaxLifeExpectancy = southAsianCountries.reduce((maxLifeExp, element) =
 // subSaharanMaxLifeExpectancy = subSaharanCountries.reduce((maxLifeExp, element) => Math.max(maxLifeExp, element.lifeExpectancy), 0)
 
 console.log("South Asia");
-console.log(southAsianCountries);
-console.log("Total Population:", southAsianPopulation);
-console.log("Max Life Expectancy:", southAsianMaxLifeExpectancy);
+// console.log(southAsianCountries);
+// console.log("Total Population:", southAsianPopulation);
+// console.log("Max Life Expectancy:", southAsianMaxLifeExpectancy);
+// console.log(normalizedCountries);
