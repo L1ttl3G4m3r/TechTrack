@@ -6,7 +6,7 @@
     <title>Random Emoji</title>
   </head>
   <body>
-    <h1>🎲 Random Emoji</h1>
+    <h1>Random Emoji</h1>
     <p id="emoji" style="font-size: 4rem">Loading...</p>
     <p id="name"></p>
     <p id="category"></p>
@@ -28,7 +28,7 @@
           })
           .catch((error) => {
             console.error("Error fetching data:", error);
-            document.getElementById("emoji").textContent = "❌ Error loading emoji";
+            document.getElementById("emoji").textContent = "Error loading emoji";
           });
       }
 
