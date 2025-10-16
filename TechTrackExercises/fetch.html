@@ -12,24 +12,24 @@
     <p id="category"></p>
 
     <script>
-      function getData(url) {
-        fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("API data:", data);
+      async function getData(url) {
+        try {
+          const response = await fetch(url);
 
-            const emoji = document.getElementById("emoji");
-            const name = document.getElementById("name");
-            const category = document.getElementById("category");
+          const data = await response.json();
+          console.log("API data:", data);
 
-            emoji.innerHTML = data.htmlCode[0];
-            name.textContent = `Name: ${data.name}`;
-            category.textContent = `Category: ${data.category}`;
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-            document.getElementById("emoji").textContent = "Error loading emoji";
-          });
+          const emoji = document.getElementById("emoji");
+          const name = document.getElementById("name");
+          const category = document.getElementById("category");
+
+          emoji.innerHTML = data.htmlCode[0];
+          name.textContent = `Name: ${data.name}`;
+          category.textContent = `Category: ${data.category}`;
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          document.getElementById("emoji").textContent = "Error loading emoji";
+        }
       }
 
       getData("https://emojihub.yurace.pro/api/random");
