@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Emoji</title>
+  </head>
+  <body>
+    <h1>🎲 Random Emoji</h1>
+    <p id="emoji" style="font-size: 4rem">Loading...</p>
+    <p id="name"></p>
+    <p id="category"></p>
+
+    <script>
+      function getData(url) {
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("API data:", data);
+
+            const emoji = document.getElementById("emoji");
+            const name = document.getElementById("name");
+            const category = document.getElementById("category");
+
+            emoji.innerHTML = data.htmlCode[0];
+            name.textContent = `Name: ${data.name}`;
+            category.textContent = `Category: ${data.category}`;
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+            document.getElementById("emoji").textContent = "❌ Error loading emoji";
+          });
+      }
+
+      getData("https://emojihub.yurace.pro/api/random");
+    </script>
+  </body>
+</html>
