@@ -1,9 +1,10 @@
 <script lang="ts">
   import * as d3 from "d3";
   import Chart from '$lib/components/Chart.svelte';
+  import Card from '$lib/components/Card.svelte';
 
-  // Hardcoded data for testing
-  const cards = [
+  // Hardcoded bubble chart data
+  const bubbleCards = [
     { name: "Pikachu", value: 20 },
     { name: "Charizard", value: 50 },
     { name: "Bulbasaur", value: 30 },
@@ -15,8 +16,12 @@
     { name: "Jigglypuff", value: 10 },
     { name: "Dragonite", value: 50 }
   ];
+
+  export let data; // comes from +page.server.js
+  const randomCard = data.card;
 </script>
 
 <h1>Welcome to PokémonTCG</h1>
 
-<Chart {cards} />
+<Chart cards={bubbleCards} />
+<Card card={randomCard} />
