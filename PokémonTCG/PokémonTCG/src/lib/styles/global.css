@@ -1,0 +1,95 @@
+/* Body en basisachtergrond */
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background-color: #8b0000;
+  color: white;
+}
+
+/* Algemeen grid center */
+.background {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+/* Kaart container */
+.card {
+  position: relative;
+  padding: 3rem;
+  border-radius: 2rem;
+  background: rgba(139,0,0,0.6);
+  border: 6px solid #ffd700;
+  box-shadow: 0 0 30px #ffd700;
+}
+
+/* Gouden glow */
+.glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 2rem;
+  border: 6px solid #ffea00;
+  animation: glowPulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Tekst content */
+.text-content {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Titels, paragraven en copyright */
+.text-content h1 { font-size:3rem; font-weight:bold; text-shadow:0 0 10px #ffd700; margin:0; }
+.text-content p, .text-content #copyright { font-size:1.5rem; text-shadow:0 0 10px #ffd700; margin:0; }
+.text-content #copyright { font-size:1rem; }
+
+/* Puntjes animatie */
+.dots { margin-left:0.5rem; display:inline-block; min-width:1.5rem; }
+
+/* Knop */
+.text-content button {
+  background:white;
+  color:#b00000;
+  font-weight:600;
+  font-size:1rem;
+  padding:1rem 2rem;
+  border:none;
+  border-radius:1rem;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 0 15px #ffd700;
+}
+.text-content button:hover { background:#ffd700; color:black; }
+
+/* Kaart afbeelding */
+.card-image { max-width:150px; max-height:220px; border-radius:8px; }
+
+/* Glow animatie keyframes */
+@keyframes glowPulse {
+  0%   { box-shadow:0 0 20px #ffd700,0 0 40px #ffea00; opacity:0.9; }
+  50%  { box-shadow:0 0 40px #ffe066,0 0 80px #ffea00; opacity:1; }
+  100% { box-shadow:0 0 20px #ffd700,0 0 40px #ffea00; opacity:0.9; }
+}
+
+/* Grid voor binder pagina */
+.binder-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; justify-items:center; width:80%; margin-top:2rem; }
+
+/* Overlay */
+.overlay {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.7);
+  display:flex; justify-content:center; align-items:center;
+  flex-direction:column; z-index:1000;
+}
+.close-overlay {
+  position:absolute; top:1rem; left:1rem; background:#ffd700;
+  border:none; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer;
+  font-weight:bold; box-shadow:0 0 5px #ffd700;
+}
+.close-overlay:hover { background:#fff; }
+svg { width:400px; height:200px; }
