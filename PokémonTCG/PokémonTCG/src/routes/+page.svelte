@@ -1,10 +1,52 @@
-<script lang="ts">
-  import * as d3 from "d3";
-  import Card from '$lib/components/Card.svelte';
+<script>
+  import { onMount } from "svelte";
+
+  let randomCard = null;
+  let dots = "."; // voor de puntjes animatie
+
+  async function fetchRandomCard() {
+    try {
+      // Eerst totale aantal kaarten ophalen
+      const metaResp = await fetch(`https://api.pokemontcg.io/v2/cards?pageSize=1`);
+      const metaData = await metaResp.json();
+      const totalCards = metaData.totalCount;
+
+      // Kies een random index
+      const pageSize = 1;
+      const randomIndex = Math.floor(Math.random() * totalCards);
+      const page = Math.floor(randomIndex / pageSize) + 1;
+
+      // Haal de kaart op van de random pagina
+      const response = await fetch(
+        `https://api.pokemontcg.io/v2/cards?pageSize=${pageSize}&page=${page}`
+      );
+      const data = await response.json();
+      const card = data.data[0];
+
+      if (card && card.images?.large) {
+        randomCard = card;
+      }
+    } catch (err) {
+      console.error("Kan kaart niet laden:", err);
+    }
+  }
 
   function goToCollection() {
     window.location.href = "/collection";
   }
+
+  onMount(() => {
+    fetchRandomCard();
+
+    // Animatie voor de puntjes
+    const interval = setInterval(() => {
+      if (dots === ".") dots = "..";
+      else if (dots === "..") dots = "...";
+      else dots = ".";
+    }, 500);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 <div class="background">
@@ -12,9 +54,18 @@
     <div class="glow"></div>
 
     <div class="text-content">
-      <h1>Pokémon TCG Dashboard</h1>
-      <p>Verzamel, analyseer en visualiseer je kaarten</p>
-      <button on:click={goToCollection}>Ga naar mijn collectie</button>
+      <h1>Pokémon Datavisualisatie</h1>
+      <p>Analyseer en visualiseer Pokémon kaarten</p>
+
+      {#if randomCard}
+        <!-- Alleen de afbeelding -->
+        <img src={randomCard.images.large} alt="Pokémon kaart" class="card-image" />
+      {:else}
+        <p>Een willekeurige kaart wordt geladen<span class="dots">{dots}</span></p>
+      {/if}
+
+      <button on:click={goToCollection}>Begin</button>
+      <p id="copyright">Gemaakt door: Kaylee Hoek</p>
     </div>
   </main>
 </div>
@@ -26,15 +77,12 @@
     font-family: system-ui, sans-serif;
   }
 
-  /* Achtergrond vult volledig scherm */
   .background {
     display: grid;
     place-items: center;
     min-height: 100vh;
-    background-color: #8b0000; /* effen rood */
   }
 
-  /* Goud-glanzende kaartbox */
   .card {
     position: relative;
     padding: 3rem;
@@ -44,7 +92,6 @@
     box-shadow: 0 0 30px #ffd700;
   }
 
-  /* Gouden glow laag */
   .glow {
     position: absolute;
     inset: 0;
@@ -54,7 +101,6 @@
     pointer-events: none;
   }
 
-  /* Alle tekst gecentreerd en wit */
   .text-content {
     display: grid;
     place-items: center;
@@ -78,6 +124,18 @@
     margin: 0;
   }
 
+  .text-content #copyright {
+    font-size: 1rem;
+    text-shadow: 0 0 10px #ffd700;
+    margin: 0;
+  }
+
+  .dots {
+    margin-left: 0.5rem;
+    display: inline-block;
+    min-width: 1.5rem;
+  }
+
   .text-content button {
     background-color: white;
     color: #b00000;
@@ -96,7 +154,12 @@
     color: black;
   }
 
-  /* Glow-animatie */
+  .card-image {
+    max-width: 150px;   /* kleinere kaart */
+    max-height: 220px;
+    border-radius: 8px;
+  }
+
   @keyframes glowPulse {
     0% {
       box-shadow: 0 0 20px #ffd700, 0 0 40px #ffea00;
