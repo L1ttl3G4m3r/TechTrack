@@ -7,7 +7,7 @@ export async function load() {
   const fallbackCard = {
     name: "Pikachu",
     images: { large: "https://images.pokemontcg.io/base1/58_hires.png" },
-    tcgplayer: { prices: { normal: { market: 20 } } }
+    tcgplayer: { prices: { normal: { market: 1 } } }
   };
 
   try {
