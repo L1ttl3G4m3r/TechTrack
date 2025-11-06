@@ -1,34 +1,46 @@
 // src/routes/+page.server.js
-export async function load() {
-  const API_KEY = process.env.SECRET_API_KEY;
-  const API_URL = "https://api.pokemontcg.io/v2/cards";
+import { SECRET_API_KEY } from "$env/static/private";
 
-  // fallback local card in case the API is down
-  const fallbackCard = {
-    name: "Pikachu",
-    images: { large: "https://images.pokemontcg.io/base1/58_hires.png" },
-    tcgplayer: { prices: { normal: { market: 1 } } }
-  };
+const CACHE_KEY = "topCardsCache";
+const CACHE_DURATION = 3 * 60 * 60 * 1000; // 3 uur in ms
+
+let cachedData = null; // in-memory cache
+
+export async function load() {
+  const API_URL = "https://api.pokemontcg.io/v2/cards?pageSize=9";
+
+  // Check of er een geldige cache is
+  const now = Date.now();
+  if (cachedData && now - cachedData.timestamp < CACHE_DURATION) {
+    return { topCards: cachedData.cards };
+  }
 
   try {
-    const res = await fetch(`${API_URL}?pageSize=20`, {
-      headers: { "X-Api-Key": API_KEY }
+    const res = await fetch(API_URL, {
+      headers: { "X-Api-Key": SECRET_API_KEY }
     });
 
     if (!res.ok) {
-      console.warn("API returned non-OK status:", res.status);
-      return { card: fallbackCard };
+      throw new Error(`API returned status ${res.status}`);
     }
 
     const data = await res.json();
-    const cards = data.data;
 
-    const randomIndex = Math.floor(Math.random() * cards.length);
-    const card = cards[randomIndex];
+    // Filter kaarten met marktprijs
+    const cardsWithPrice = data.data.filter(c => c.tcgplayer?.prices?.normal?.market);
 
-    return { card };
+    // Sorteer op hoogste prijs
+    cardsWithPrice.sort((a, b) => b.tcgplayer.prices.normal.market - a.tcgplayer.prices.normal.market);
+
+    // Neem top 9 kaarten
+    const topCards = cardsWithPrice.slice(0, 9);
+
+    // Sla op in cache
+    cachedData = { cards: topCards, timestamp: now };
+
+    return { topCards };
   } catch (err) {
-    console.error("Error fetching Pokémon card:", err);
-    return { card: fallbackCard };
+    console.error("API fetch failed:", err);
+    return { topCards: [] }; // leeg array bij failure
   }
 }

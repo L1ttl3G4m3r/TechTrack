@@ -1,69 +1,40 @@
 <script>
   import Card from "$lib/components/Card.svelte";
+  import PriceMarket from "$lib/components/PriceMarket.svelte";
   import pokeballImg from '$lib/Images/pokeball.png';
   import * as d3 from "d3";
 
-  const CACHE_KEY = "topCards";
-  const CACHE_DURATION = 3 * 60 * 60 * 1000; // 3 uur
-
+  // Lijst van kaarten en de kaarten die getoond worden
   let expensiveCards = [];
   let displayedCards = [];
   let loading = true;
   let error = false;
 
+  // Sorteeroptie
   let sortOption = "price";
+
+  // Overlay voor D3 visualisatie
   let showOverlay = false;
   let svgContainer;
 
-  async function fetchTopCards() {
-    loading = true;
-    error = false;
-
-    // Check cache
-    const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
-    const now = Date.now();
-    if (cached && now - cached.timestamp < CACHE_DURATION) {
-      expensiveCards = cached.cards;
-      sortCards(sortOption);
-      loading = false;
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://api.pokemontcg.io/v2/cards?q=tcgplayer.prices.market:[1 TO *]&pageSize=9&orderBy=-tcgplayer.prices.market&select=id,name,tcgplayer.prices,images,rarity`,
-        {
-          headers: { "X-Api-Key": import.meta.env.API_KEY }
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to fetch");
-
-      const data = await res.json();
-      expensiveCards = data.data || [];
-
-      if (expensiveCards.length === 0) {
-        error = true;
-      } else {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ cards: expensiveCards, timestamp: now }));
-      }
-
-      sortCards(sortOption);
-    } catch (err) {
-      console.error(err);
-      error = true;
-    } finally {
-      loading = false;
-    }
+  // Functie die PriceMarket teruggeeft
+  function handleCardsLoaded(event) {
+    expensiveCards = event.detail.cards;
+    error = expensiveCards.length === 0;
+    sortCards(sortOption);
+    loading = false;
   }
 
+  // Sorteerfunctie
   function sortCards(option) {
     sortOption = option;
 
     if(option === "price") {
-      displayedCards = [...expensiveCards].sort(
-        (a,b) => (b.tcgplayer?.prices?.normal?.market || 0) - (a.tcgplayer?.prices?.normal?.market || 0)
-      );
+      displayedCards = [...expensiveCards].sort((a,b) => {
+        const aPrice = a.tcgplayer?.prices?.normal?.market || 0;
+        const bPrice = b.tcgplayer?.prices?.normal?.market || 0;
+        return bPrice - aPrice; // Hoog naar laag
+      });
     } else if(option === "rarity") {
       const rarityOrder = ["Common","Uncommon","Rare","Rare Holo","Ultra Rare","Secret Rare"];
       displayedCards = [...expensiveCards].sort((a,b) => {
@@ -76,33 +47,39 @@
     }
   }
 
+  // Open overlay
   function openOverlay() {
     showOverlay = true;
     renderChart();
   }
 
+  // Sluit overlay
   function closeOverlay() {
     showOverlay = false;
   }
 
+  // Eenvoudige D3 bar chart
   function renderChart() {
     if(!displayedCards.length) return;
 
     const cardsWithPrice = displayedCards.filter(c => c.tcgplayer?.prices?.normal?.market);
-    const dataValues = cardsWithPrice.map(c => c.tcgplayer.prices.normal.market);
+    const data = cardsWithPrice.map(c => c.tcgplayer.prices.normal.market);
     const labels = cardsWithPrice.map(c => c.name);
 
     const width = 400;
     const height = 200;
 
     d3.select(svgContainer).selectAll("*").remove();
-    const svg = d3.select(svgContainer).attr("width", width).attr("height", height);
+
+    const svg = d3.select(svgContainer)
+      .attr("width", width)
+      .attr("height", height);
 
     const x = d3.scaleBand().domain(labels).range([0, width]).padding(0.1);
-    const y = d3.scaleLinear().domain([0, d3.max(dataValues)]).range([height, 0]);
+    const y = d3.scaleLinear().domain([0, d3.max(data)]).range([height, 0]);
 
     svg.selectAll("rect")
-      .data(dataValues)
+      .data(data)
       .enter()
       .append("rect")
       .attr("x", (_, i) => x(labels[i]))
@@ -122,44 +99,47 @@
       .attr("font-size", "10px")
       .attr("fill", "white");
   }
-
-  // Fetch kaarten bij mount
-  import { onMount } from "svelte";
-  onMount(fetchTopCards);
 </script>
 
 <div class="binder-background">
   <h1>De Binder</h1>
 
+  <!-- Knoppen -->
   <div class="controls">
     <button class="overlay-btn" on:click={openOverlay}>📊</button>
-    <label for="sortSelect">Sorteer op:</label>
-    <select id="sortSelect" bind:value={sortOption} on:change={() => sortCards(sortOption)}>
-      <option value="price">Prijs: Hoog → Laag</option>
-      <option value="rarity">Zeldzaamheid</option>
-      <option value="name">Naam: A → Z</option>
-    </select>
+    <div class="sort-dropdown">
+      <label for="sort">Sorteer op:</label>
+      <select id="sort" bind:value={sortOption} on:change={() => sortCards(sortOption)}>
+        <option value="price">Prijs: Hoog → Laag</option>
+        <option value="rarity">Zeldzaamheid</option>
+        <option value="name">Naam: A → Z</option>
+      </select>
+    </div>
   </div>
 
-  {#if loading}
-    <p>Kaarten worden geladen...</p>
-  {:else if error}
-    <p class="error">Kaarten konden niet geladen worden.</p>
-  {:else}
+  <!-- PriceMarket component met caching en error handling -->
+  <PriceMarket limit={9} on:cardsLoaded={handleCardsLoaded} />
+
+  <!-- Kaarten grid -->
+  {#if !loading && displayedCards.length > 0}
     <div class="binder-grid">
       {#each displayedCards as card}
         <Card {card} />
       {/each}
     </div>
+  {:else if !loading && error}
+    <p class="error">Kaarten konden niet geladen worden.</p>
   {/if}
 
+  <!-- Overlay voor D3 -->
   {#if showOverlay}
     <div class="overlay">
-      <button on:click={closeOverlay}>← Terug</button>
+      <button class="close-overlay" on:click={closeOverlay}>← Terug</button>
       <svg bind:this={svgContainer}></svg>
     </div>
   {/if}
 
+  <!-- Pokéball navigatie altijd bovenaan -->
   <a href="/" class="pokeball-link">
     <img src={pokeballImg} alt="Home" />
   </a>
