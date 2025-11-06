@@ -99,7 +99,7 @@
   }
 </script>
 
-<div class="background">
+<div class="binder-background">
   <h1>De Binder</h1>
 
   <!-- Knoppen -->
