@@ -10,15 +10,28 @@
 
   async function fetchTopCards() {
     try {
-      // Haal een set kaarten op (bijv. eerste 100 kaarten)
-      const response = await fetch("https://api.pokemontcg.io/v2/cards?pageSize=100&page=1");
+      const apiKey = import.meta.env.SECRET_API_KEY;
+
+      const response = await fetch(
+        "https://api.pokemontcg.io/v2/cards?q=tcgplayer.prices.market:[1 TO *]&pageSize=50&select=id,name,tcgplayer.prices.normal,cardmarket.averageSellPrice,images,rarity",
+        {
+          headers: {
+            "X-Api-Key": apiKey
+          }
+        }
+      );
+
       const data = await response.json();
 
       // Filter kaarten die een marktprijs hebben
-      const cardsWithPrice = data.data.filter(c => c.tcgplayer?.prices?.normal?.market);
+      const cardsWithPrice = data.data.filter(
+        c => c.tcgplayer?.prices?.normal?.market
+      );
 
       // Sorteer op hoogste prijs
-      cardsWithPrice.sort((a, b) => b.tcgplayer.prices.normal.market - a.tcgplayer.prices.normal.market);
+      cardsWithPrice.sort(
+        (a, b) => b.tcgplayer.prices.normal.market - a.tcgplayer.prices.normal.market
+      );
 
       // Neem de eerste 'limit' kaarten
       cards = cardsWithPrice.slice(0, limit);
