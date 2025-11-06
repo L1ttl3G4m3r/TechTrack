@@ -83,7 +83,6 @@
 	font-size: 1rem;
 }
 
-/* Puntjes animatie */
 .dots {
 	margin-left: 0.5rem;
 	display: inline-block;
@@ -118,10 +117,10 @@ select {
 }
 
 .controls {
-	display: flex; /* horizontaal naast elkaar */
-	align-items: center; /* verticaal centreren */
-	gap: 1rem; /* ruimte tussen button en dropdown */
-	margin-bottom: 1.5rem; /* optioneel: ruimte onder controls */
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
 }
 
 .overlay-btn {
@@ -136,6 +135,7 @@ select {
 	border-radius: 0.5rem;
 	font-size: 1.2rem;
 	box-shadow: 0 0 5px #ffd700;
+	transition: background 0.3s;
 }
 
 .overlay-btn:hover {
@@ -167,7 +167,6 @@ select {
 	margin-top: 2rem;
 }
 
-/* Error message */
 .error {
 	font-size: 1.5rem;
 	color: #ffd700;
@@ -201,6 +200,7 @@ select {
 	padding: 0.5rem 1rem;
 	border-radius: 0.5rem;
 	box-shadow: 0 0 5px #ffd700;
+	transition: background 0.3s;
 }
 
 .close-overlay:hover {
@@ -227,10 +227,10 @@ svg {
 .pokeball-link img {
 	width: 100%;
 	height: 100%;
-	transition: transform 0.2s ease;
-	box-shadow: none;
-	border: none;
 	display: block;
+	border: none;
+	box-shadow: none;
+	transition: transform 0.2s ease;
 }
 
 .pokeball-link img:hover {
@@ -242,21 +242,15 @@ svg {
 /* ------------------------- */
 @keyframes glowPulse {
 	0% {
-		box-shadow:
-			0 0 20px #ffd700,
-			0 0 40px #ffea00;
+		box-shadow: 0 0 20px #ffd700, 0 0 40px #ffea00;
 		opacity: 0.9;
 	}
 	50% {
-		box-shadow:
-			0 0 40px #ffe066,
-			0 0 80px #ffea00;
+		box-shadow: 0 0 40px #ffe066, 0 0 80px #ffea00;
 		opacity: 1;
 	}
 	100% {
-		box-shadow:
-			0 0 20px #ffd700,
-			0 0 40px #ffea00;
+		box-shadow: 0 0 20px #ffd700, 0 0 40px #ffea00;
 		opacity: 0.9;
 	}
 }
