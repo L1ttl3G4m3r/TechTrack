@@ -1,7 +1,7 @@
 <script>
   import Card from "$lib/components/Card.svelte";
   import PriceMarket from "$lib/components/PriceMarket.svelte";
-  import pokeballImg from "$lib/Images/pokeball.png";
+  import pokeballImg from '$lib/Images/pokeball.png';
   import * as d3 from "d3";
 
   // Lijst van kaarten en de kaarten die getoond worden
@@ -60,7 +60,6 @@
   function renderChart() {
     if(!displayedCards.length) return;
 
-    // Alleen kaarten met prijs
     const cardsWithPrice = displayedCards.filter(c => c.tcgplayer?.prices?.normal?.market);
     const data = cardsWithPrice.map(c => c.tcgplayer.prices.normal.market);
     const labels = cardsWithPrice.map(c => c.name);
@@ -68,18 +67,15 @@
     const width = 400;
     const height = 200;
 
-    // Maak SVG leeg
     d3.select(svgContainer).selectAll("*").remove();
 
     const svg = d3.select(svgContainer)
       .attr("width", width)
       .attr("height", height);
 
-    // Schalen
     const x = d3.scaleBand().domain(labels).range([0, width]).padding(0.1);
     const y = d3.scaleLinear().domain([0, d3.max(data)]).range([height, 0]);
 
-    // Bars
     svg.selectAll("rect")
       .data(data)
       .enter()
@@ -90,7 +86,6 @@
       .attr("height", d => height - y(d))
       .attr("fill", "#ffd700");
 
-    // Optioneel: x-as labels
     svg.selectAll("text")
       .data(labels)
       .enter()
@@ -104,12 +99,7 @@
   }
 </script>
 
-<div class="binder-background">
-  <!-- Pokéball navigatie -->
-  <a href="/" class="pokeball-link">
-    <img src={pokeballImg} alt="Home" />
-  </a>
-
+<div class="background">
   <h1>De Binder</h1>
 
   <!-- Knoppen -->
@@ -146,50 +136,9 @@
       <svg bind:this={svgContainer}></svg>
     </div>
   {/if}
+
+  <!-- Pokéball navigatie altijd bovenaan -->
+  <a href="/" class="pokeball-link">
+    <img src={pokeballImg} alt="Home" />
+  </a>
 </div>
-
-<style>
-  :global(body) { margin:0; font-family: system-ui, sans-serif; background-color: #8b0000; }
-
-  .binder-background {
-    display: flex; flex-direction: column; align-items: center; padding: 2rem;
-    min-height: 100vh; color:white; position: relative;
-    background: linear-gradient(to right, #a30000 0%, #a30000 35%, #8b0000 35%, #8b0000 65%, #a30000 65%, #a30000 100%);
-  }
-
-  .pokeball-link { position:absolute; top:1rem; left:1rem; width:50px; height:50px; }
-  .pokeball-link img { width:100%; height:100%; cursor:pointer; transition: transform 0.2s; }
-  .pokeball-link img:hover { transform: scale(1.2); }
-
-  h1 { font-size:3rem; text-shadow:0 0 10px #ffd700; margin-bottom:1rem; }
-
-  .controls { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
-
-  .overlay-btn {
-    background:#ffd700; border:none; padding:0.5rem 1rem; border-radius:0.5rem;
-    font-size:1.2rem; cursor:pointer; font-weight:bold; box-shadow:0 0 5px #ffd700;
-  }
-  .overlay-btn:hover { background:#fff; }
-
-  .sort-dropdown { display:flex; align-items:center; gap:0.5rem; }
-  select { padding:0.4rem 0.6rem; border-radius:0.5rem; border:none; font-weight:bold; cursor:pointer; }
-
-  .binder-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; justify-items:center; width:80%; margin-top:2rem; }
-
-  .error { font-size:1.5rem; color:#ffd700; text-shadow:0 0 10px #b8860b; margin-top:2rem; }
-
-  /* Overlay styling */
-  .overlay {
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background: rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center;
-    flex-direction:column; z-index:1000;
-  }
-
-  .close-overlay {
-    position:absolute; top:1rem; left:1rem; background:#ffd700; border:none; padding:0.5rem 1rem; border-radius:0.5rem; cursor:pointer;
-    font-weight:bold; box-shadow:0 0 5px #ffd700;
-  }
-  .close-overlay:hover { background:#fff; }
-
-  svg { width:400px; height:200px; }
-</style>

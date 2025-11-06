@@ -1,7 +1,7 @@
 /* ------------------------- */
 /* Body en algemene achtergrond */
 /* ------------------------- */
-:global(body) {
+* {
   margin: 0;
   font-family: system-ui, sans-serif;
   background-color: #8b0000;
@@ -11,23 +11,22 @@
 /* ------------------------- */
 /* Grid / container styling */
 /* ------------------------- */
-.background,
-.binder-background {
+.background {
   display: grid;
   place-items: center;
   min-height: 100vh;
 }
 
-/* Binder specifieke achtergrond gradient */
-.binder-background {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  background: linear-gradient(to right, #a30000 0%, #a30000 35%, #8b0000 35%, #8b0000 65%, #a30000 65%, #a30000 100%);
-  color: white;
-  position: relative;
-}
+  .binder-background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+    color:white;
+    position: relative;
+    background: linear-gradient(to right, #a30000 0%, #a30000 35%, #8b0000 35%, #8b0000 65%, #a30000 65%, #a30000 100%);
+  }
 
 /* ------------------------- */
 /* Kaart / Card styling */
