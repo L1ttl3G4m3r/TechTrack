@@ -1,46 +1,70 @@
 // src/routes/+page.server.js
 import { SECRET_API_KEY } from "$env/static/private";
 
-const CACHE_KEY = "topCardsCache";
-const CACHE_DURATION = 3 * 60 * 60 * 1000; // 3 uur in ms
+const CACHE_DURATION = 60 * 60 * 1000; // 1 uur
+let cachedCard = null;
 
-let cachedData = null; // in-memory cache
+// Optioneel: lijst van Pokémon namen voor random selectie
+const pokemonNames = [
+  "Pikachu", "Charizard", "Bulbasaur", "Squirtle",
+  "Eevee", "Mewtwo", "Gyarados", "Snorlax"
+  // ...meer namen toevoegen voor grotere variatie
+];
+
+function getRandomPokemon() {
+  const index = Math.floor(Math.random() * pokemonNames.length);
+  return pokemonNames[index];
+}
 
 export async function load() {
-  const API_URL = "https://api.pokemontcg.io/v2/cards?pageSize=9";
-
-  // Check of er een geldige cache is
   const now = Date.now();
-  if (cachedData && now - cachedData.timestamp < CACHE_DURATION) {
-    return { topCards: cachedData.cards };
+
+  if (cachedCard && now - cachedCard.timestamp < CACHE_DURATION) {
+    return {
+      card: cachedCard.card,
+      timeLeft: CACHE_DURATION - (now - cachedCard.timestamp)
+    };
   }
 
   try {
-    const res = await fetch(API_URL, {
-      headers: { "X-Api-Key": SECRET_API_KEY }
-    });
+    const randomPokemon = getRandomPokemon();
+
+    const res = await fetch(
+      `https://www.pokemonpricetracker.com/api/v2/cards?search=${encodeURIComponent(randomPokemon)}&limit=1`,
+      {
+        headers: {
+          "Authorization": `Bearer ${SECRET_API_KEY}`
+        }
+      }
+    );
 
     if (!res.ok) {
       throw new Error(`API returned status ${res.status}`);
     }
 
-    const data = await res.json();
+    const json = await res.json();
+    const cardData = json.data?.[0] ?? null;
 
-    // Filter kaarten met marktprijs
-    const cardsWithPrice = data.data.filter(c => c.tcgplayer?.prices?.normal?.market);
+    let card = null;
+    if (cardData) {
+      card = {
+        image: cardData.imageUrl,
+        setName: cardData.setName,
+        price: Number(cardData.marketPrice ?? cardData.price ?? 0)
+      };
+    }
 
-    // Sorteer op hoogste prijs
-    cardsWithPrice.sort((a, b) => b.tcgplayer.prices.normal.market - a.tcgplayer.prices.normal.market);
+    cachedCard = { card, timestamp: now };
 
-    // Neem top 9 kaarten
-    const topCards = cardsWithPrice.slice(0, 9);
-
-    // Sla op in cache
-    cachedData = { cards: topCards, timestamp: now };
-
-    return { topCards };
+    return {
+      card,
+      timeLeft: CACHE_DURATION
+    };
   } catch (err) {
-    console.error("API fetch failed:", err);
-    return { topCards: [] }; // leeg array bij failure
+    console.error("Kan kaart niet laden:", err);
+    return {
+      card: null,
+      timeLeft: CACHE_DURATION
+    };
   }
 }

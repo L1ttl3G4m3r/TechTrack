@@ -1,62 +1,36 @@
 <script>
-  import { onMount } from "svelte";
+  export let data;
+  let randomCard = data.card;
+  let timeLeft = data.timeLeft;
 
-  let randomCard = null;
-  let dots = "."; // voor de puntjes animatie
+  import { onMount, onDestroy } from "svelte";
+  let dots = ".";
 
-  const CACHE_KEY = "randomCardData";
-  const CACHE_DURATION = 3 * 60 * 60 * 1000; // 3 uur in milliseconden
-
-  async function fetchRandomCard() {
-    try {
-      // Eerst totale aantal kaarten ophalen
-      const metaResp = await fetch(`https://api.pokemontcg.io/v2/cards?pageSize=1`);
-      const metaData = await metaResp.json();
-      const totalCards = metaData.totalCount;
-
-      // Kies een random index
-      const pageSize = 1;
-      const randomIndex = Math.floor(Math.random() * totalCards);
-      const page = Math.floor(randomIndex / pageSize) + 1;
-
-      // Haal de kaart op van de random pagina
-      const response = await fetch(
-        `https://api.pokemontcg.io/v2/cards?pageSize=${pageSize}&page=${page}`
-      );
-      const data = await response.json();
-      const card = data.data[0];
-
-      if (card && card.images?.large) {
-        randomCard = card;
-        // Opslaan in localStorage met timestamp
-        localStorage.setItem(CACHE_KEY, JSON.stringify({
-          card: randomCard,
-          timestamp: Date.now()
-        }));
-      }
-    } catch (err) {
-      console.error("Kan kaart niet laden:", err);
-    }
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
-  onMount(() => {
-    // Check cache
-    const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY));
-    const now = Date.now();
-    if (cachedData && now - cachedData.timestamp < CACHE_DURATION) {
-      randomCard = cachedData.card;
-    } else {
-      fetchRandomCard();
-    }
+  let dotsInterval;
+  let timerInterval;
 
-    // Animatie voor de puntjes
-    const interval = setInterval(() => {
+  onMount(() => {
+    dotsInterval = setInterval(() => {
       if (dots === ".") dots = "..";
       else if (dots === "..") dots = "...";
       else dots = ".";
     }, 500);
 
-    return () => clearInterval(interval);
+    timerInterval = setInterval(() => {
+      if (timeLeft > 0) timeLeft -= 1000;
+    }, 1000);
+  });
+
+  onDestroy(() => {
+    clearInterval(dotsInterval);
+    clearInterval(timerInterval);
   });
 </script>
 
@@ -69,7 +43,10 @@
       <p>Analyseer en visualiseer Pokémon kaarten</p>
 
       {#if randomCard}
-        <img src={randomCard.images.large} alt="Pokémon kaart" class="card-image" />
+        <img src={randomCard.image} alt="Pokémon kaart" class="card-image" />
+        <p>{randomCard.setName}</p>
+        <p>Huidige prijs: ${randomCard.price}</p>
+        <p>Nieuwe kaart over: {formatTime(timeLeft)}<span class="dots">{dots}</span></p>
       {:else}
         <p>Een willekeurige kaart wordt geladen<span class="dots">{dots}</span></p>
       {/if}

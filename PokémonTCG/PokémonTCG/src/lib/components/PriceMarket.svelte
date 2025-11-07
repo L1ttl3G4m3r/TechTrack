@@ -3,40 +3,89 @@
 
   const dispatch = createEventDispatcher();
 
-  export let limit = 9; // aantal kaarten dat we terug willen sturen
+  export let limit = 9;
+
+  const CACHE_KEY = "priceMarketCache";
+  const CACHE_DURATION = 60 * 60 * 1000; // 1 uur in ms
 
   let cards = [];
   let loading = true;
+  let timeLeft = 0;
+  let interval;
+
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
 
   async function fetchTopCards() {
     try {
-      // Haal een set kaarten op (bijv. eerste 100 kaarten)
-      const response = await fetch("https://api.pokemontcg.io/v2/cards?pageSize=9&page=1");
+      const response = await fetch(
+        `https://www.pokemonpricetracker.com/api/v2/cards?sortBy=price&sortOrder=desc&limit=${limit}`
+      );
+
       const data = await response.json();
 
-      // Filter kaarten die een marktprijs hebben
-      const cardsWithPrice = data.data.filter(c => c.tcgplayer?.prices?.normal?.market);
+      cards = (data.data || []).map(c => ({
+        id: c.id || c.tcgPlayerId,
+        name: c.name,
+        image: c.imageUrl,
+        setName: c.setName,
+        rarity: c.rarity || "Onbekend",
+        price: Number(c.marketPrice || c.price || 0)
+      }));
 
-      // Sorteer op hoogste prijs
-      cardsWithPrice.sort((a, b) => b.tcgplayer.prices.normal.market - a.tcgplayer.prices.normal.market);
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({ cards, timestamp: Date.now() })
+      );
 
-      // Neem de eerste 'limit' kaarten
-      cards = cardsWithPrice.slice(0, limit);
-
-      // Stuur de kaarten door naar de parent component
-      dispatch("cardsLoaded", { cards });
+      dispatch("cardsLoaded", { cards, timeLeft: CACHE_DURATION });
+      startTimer(CACHE_DURATION);
     } catch (err) {
-      console.error("Kon kaarten niet laden:", err);
+      console.error("Fout bij ophalen kaarten:", err);
     } finally {
       loading = false;
     }
   }
 
-  onMount(fetchTopCards);
+  function startTimer(initialTime) {
+    clearInterval(interval);
+    timeLeft = initialTime;
+
+    interval = setInterval(() => {
+      if (timeLeft > 0) {
+        timeLeft -= 1000;
+      } else {
+        fetchTopCards();
+      }
+    }, 1000);
+  }
+
+  onMount(() => {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+    const now = Date.now();
+
+    if (cached && now - cached.timestamp < CACHE_DURATION) {
+      cards = cached.cards;
+      loading = false;
+      const remaining = CACHE_DURATION - (now - cached.timestamp);
+      dispatch("cardsLoaded", { cards, timeLeft: remaining });
+      startTimer(remaining);
+    } else {
+      fetchTopCards();
+    }
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 {#if loading}
   <p class="loading">Kaarten worden geladen...</p>
+{:else}
+  <p class="loading">Nieuwe data over {formatTime(timeLeft)}</p>
 {/if}
 
 <style>

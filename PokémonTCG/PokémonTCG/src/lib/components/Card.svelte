@@ -1,16 +1,21 @@
 <script lang="ts">
-  export let card: { name: string; images: { large: string }; tcgplayer?: { prices?: any } } | null = null;
+  export let card: {
+    id?: string;
+    name: string;
+    image: string;
+    price?: number;
+    rarity?: string;
+    setName?: string;
+  } | null = null;
 </script>
 
 {#if card}
   <div class="card-container">
-    <img src={card.images.large} alt={card.name} />
+    <img src={card.image} alt={card.name} />
     <h2>{card.name}</h2>
-    {#if card.tcgplayer?.prices?.normal?.market}
-      <p>Price: ${card.tcgplayer.prices.normal.market}</p>
-    {:else}
-      <p>Price: N/A</p>
-    {/if}
+    <p>Set: {card.setName || "Onbekend"}</p>
+    <p>Zeldzaamheid: {card.rarity || "Onbekend"}</p>
+    <p>Prijs: {card.price ? `$${card.price.toFixed(2)}` : "N/A"}</p>
   </div>
 {:else}
   <p>No card available.</p>
