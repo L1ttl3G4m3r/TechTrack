@@ -31,7 +31,6 @@
 
       {#if randomCard}
         <img src={randomCard.image} alt={randomCard.name} class="card-image" />
-        <h2>{randomCard.name}</h2>
       {:else}
         <p>Een willekeurige kaart wordt geladen<span class="dots">{dots}</span></p>
       {/if}

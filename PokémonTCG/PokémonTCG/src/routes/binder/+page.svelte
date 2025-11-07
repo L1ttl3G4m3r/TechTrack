@@ -1,54 +1,37 @@
 <script>
   import Card from "$lib/components/Card.svelte";
-  import PriceMarket from "$lib/components/PriceMarket.svelte";
   import pokeballImg from '$lib/Images/pokeball.png';
   import * as d3 from "d3";
 
-  let expensiveCards = [];
-  let displayedCards = [];
-  let loading = true;
-  let error = false;
+  export let data;
+
+  // Server-side data van +page.server.js
+  let topCards = data.topCards ?? [];
+  let displayedCards = [...topCards];
 
   let sortOption = "price";
   let showOverlay = false;
   let svgContainer;
-  let timeLeft = 0;
 
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  }
-
-  // Ontvang kaarten van PriceMarket
-  function handleCardsLoaded(event) {
-    expensiveCards = event.detail.cards;
-    timeLeft = event.detail.timeLeft;
-    error = expensiveCards.length === 0;
-    sortCards(sortOption);
-    loading = false;
-  }
-
-  // Sorteerfunctie
+  // Sorteerfunctie: prijs, zeldzaamheid, naam
   function sortCards(option) {
     sortOption = option;
 
     if (option === "price") {
-      displayedCards = [...expensiveCards].sort((a, b) => b.price - a.price);
+      displayedCards = [...topCards].sort((a, b) => b.price - a.price);
     } else if (option === "rarity") {
       const rarityOrder = ["Common","Uncommon","Rare","Rare Holo","Ultra Rare","Secret Rare"];
-      displayedCards = [...expensiveCards].sort((a, b) => {
-        const aIndex = rarityOrder.indexOf(a.rarity);
-        const bIndex = rarityOrder.indexOf(b.rarity);
-        return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
+      displayedCards = [...topCards].sort((a, b) => {
+        const aIndex = rarityOrder.indexOf(a.rarity ?? "") !== -1 ? rarityOrder.indexOf(a.rarity ?? "") : 99;
+        const bIndex = rarityOrder.indexOf(b.rarity ?? "") !== -1 ? rarityOrder.indexOf(b.rarity ?? "") : 99;
+        return aIndex - bIndex;
       });
     } else if (option === "name") {
-      displayedCards = [...expensiveCards].sort((a, b) => a.name.localeCompare(b.name));
+      displayedCards = [...topCards].sort((a, b) => a.name.localeCompare(b.name));
     }
   }
 
-  // Overlay functies
+  // Overlay functies (D3 bubble chart)
   function openOverlay() {
     showOverlay = true;
     renderChart();
@@ -61,38 +44,45 @@
   function renderChart() {
     if (!displayedCards.length) return;
 
-    const data = displayedCards.map(c => c.price);
-    const labels = displayedCards.map(c => c.name);
+    const svg = d3.select(svgContainer);
+    svg.selectAll("*").remove();
 
     const width = 400;
-    const height = 200;
+    const height = 400;
+    svg.attr("width", width).attr("height", height);
 
-    d3.select(svgContainer).selectAll("*").remove();
+    const x = d3.scaleLinear()
+      .domain([0, d3.max(displayedCards, d => d.price)])
+      .range([50, width - 50]);
 
-    const svg = d3.select(svgContainer)
-      .attr("width", width)
-      .attr("height", height);
+    const y = d3.scaleLinear()
+      .domain([0, displayedCards.length - 1])
+      .range([50, height - 50]);
 
-    const x = d3.scaleBand().domain(labels).range([0, width]).padding(0.1);
-    const y = d3.scaleLinear().domain([0, d3.max(data)]).range([height, 0]);
+    const r = d3.scaleSqrt()
+      .domain([0, d3.max(displayedCards, d => d.price)])
+      .range([10, 40]);
 
-    svg.selectAll("rect")
-      .data(data)
+    // Bubble chart
+    svg.selectAll("circle")
+      .data(displayedCards)
       .enter()
-      .append("rect")
-      .attr("x", (_, i) => x(labels[i]))
-      .attr("y", d => y(d))
-      .attr("width", x.bandwidth())
-      .attr("height", d => height - y(d))
-      .attr("fill", "#ffd700");
+      .append("circle")
+      .attr("cx", (d, i) => x(d.price))
+      .attr("cy", (d, i) => y(i))
+      .attr("r", d => r(d.price))
+      .attr("fill", "#ffcb05")
+      .attr("stroke", "#3b4cca")
+      .attr("stroke-width", 2);
 
+    // Optioneel: naam labels boven de cirkels
     svg.selectAll("text")
-      .data(labels)
+      .data(displayedCards)
       .enter()
       .append("text")
-      .text(d => d)
-      .attr("x", d => x(d) + x.bandwidth() / 2)
-      .attr("y", height + 15)
+      .text(d => d.name)
+      .attr("x", (d, i) => x(d.price))
+      .attr("y", (d, i) => y(i) - r(d.price) - 5)
       .attr("text-anchor", "middle")
       .attr("font-size", "10px")
       .attr("fill", "white");
@@ -101,9 +91,6 @@
 
 <div class="binder-background">
   <h1>De Binder</h1>
-
-  <!-- Timer -->
-  <p>Nieuwe data over {formatTime(timeLeft)}</p>
 
   <!-- Controls -->
   <div class="controls">
@@ -118,22 +105,23 @@
     </div>
   </div>
 
-  <!-- PriceMarket haalt kaarten op -->
-  <PriceMarket limit={9} on:cardsLoaded={handleCardsLoaded} />
-
-  <!-- Kaarten grid -->
-  {#if !loading && displayedCards.length > 0}
+  <!-- Kaarten grid 3x3 -->
+  {#if displayedCards.length > 0}
     <div class="binder-grid">
       {#each displayedCards as card}
-        <Card {card} />
+        <div class="card">
+          <img src={card.image} alt={card.name} />
+          <h3>{card.name}</h3>
+          <p>{card.setName} | {card.rarity}</p>
+          <p>€{card.price}</p>
+        </div>
       {/each}
     </div>
-  {:else if !loading && error}
-    <p class="error">Kaarten konden niet geladen worden.</p>
   {:else}
-    <p>Kaarten worden geladen...</p>
+    <p>Kaarten konden niet geladen worden.</p>
   {/if}
 
+  <!-- Overlay -->
   {#if showOverlay}
     <div class="overlay">
       <button class="close-overlay" on:click={closeOverlay}>← Terug</button>
@@ -141,6 +129,7 @@
     </div>
   {/if}
 
+  <!-- Pokéball link naar homepage -->
   <a href="/" class="pokeball-link">
     <img src={pokeballImg} alt="Home" />
   </a>
