@@ -6,15 +6,7 @@
   import { onMount, onDestroy } from "svelte";
   let dots = ".";
 
-  function formatTime(ms) {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  }
-
   let dotsInterval;
-  let timerInterval;
 
   onMount(() => {
     dotsInterval = setInterval(() => {
@@ -22,15 +14,10 @@
       else if (dots === "..") dots = "...";
       else dots = ".";
     }, 500);
-
-    timerInterval = setInterval(() => {
-      if (timeLeft > 0) timeLeft -= 1000;
-    }, 1000);
   });
 
   onDestroy(() => {
     clearInterval(dotsInterval);
-    clearInterval(timerInterval);
   });
 </script>
 
@@ -43,10 +30,8 @@
       <p>Analyseer en visualiseer Pokémon kaarten</p>
 
       {#if randomCard}
-        <img src={randomCard.image} alt="Pokémon kaart" class="card-image" />
-        <p>{randomCard.setName}</p>
-        <p>Huidige prijs: ${randomCard.price}</p>
-        <p>Nieuwe kaart over: {formatTime(timeLeft)}<span class="dots">{dots}</span></p>
+        <img src={randomCard.image} alt={randomCard.name} class="card-image" />
+        <h2>{randomCard.name}</h2>
       {:else}
         <p>Een willekeurige kaart wordt geladen<span class="dots">{dots}</span></p>
       {/if}
