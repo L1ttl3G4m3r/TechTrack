@@ -1,9 +1,8 @@
 import { SECRET_API_KEY } from '$env/static/private';
 
-const CACHE_DURATION = 60 * 60 * 1000; // 1 uur
-
-// ==================== Random Pokémon Kaart ====================
-let cachedCard = null;
+// ==========================================================
+// RANDOM POKÉMON KAART
+// ==========================================================
 
 const pokemonNames = [
   "Pikachu", "Charizard", "Bulbasaur", "Squirtle",
@@ -16,60 +15,40 @@ function getRandomPokemon() {
 }
 
 export async function getCardData() {
-  const now = Date.now();
-
-  if (cachedCard && now - cachedCard.timestamp < CACHE_DURATION) {
-    return {
-      card: cachedCard.card,
-      timeLeft: CACHE_DURATION - (now - cachedCard.timestamp)
-    };
-  }
-
   try {
     const randomPokemon = getRandomPokemon();
-
     const res = await fetch(
       `https://www.pokemonpricetracker.com/api/v2/cards?search=${encodeURIComponent(randomPokemon)}&limit=1`,
       {
         headers: {
-          "Authorization": `Bearer ${SECRET_API_KEY}`
+          Authorization: `Bearer ${SECRET_API_KEY}`
         }
       }
     );
 
-    if (!res.ok) {
-      throw new Error(`API returned status ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`API returned status ${res.status}`);
 
     const json = await res.json();
     const cardData = json.data?.[0] ?? null;
 
-    let card = null;
-    if (cardData) {
-      card = {
-        image: cardData.imageUrl,
-        setName: cardData.setName,
-        price: Number(cardData.marketPrice ?? cardData.price ?? 0)
-      };
-    }
+    const card = cardData
+      ? {
+          image: cardData.imageUrl,
+          setName: cardData.setName,
+          price: Number(cardData.marketPrice ?? cardData.price ?? 0)
+        }
+      : null;
 
-    cachedCard = { card, timestamp: now };
-
-    return {
-      card,
-      timeLeft: CACHE_DURATION
-    };
+    return { card };
   } catch (err) {
     console.error("Kan kaart niet laden:", err);
-    return {
-      card: null,
-      timeLeft: CACHE_DURATION
-    };
+    return { card: null };
   }
 }
 
-// ==================== Top Pokémon Kaarten ====================
-let cachedTopCards = null;
+// ==========================================================
+// TOP POKÉMON KAARTEN
+// ==========================================================
 
 async function fetchTopCards() {
   try {
@@ -102,13 +81,6 @@ async function fetchTopCards() {
 }
 
 export async function getTopCards() {
-  const now = Date.now();
-
-  if (!cachedTopCards || now - cachedTopCards.timestamp >= CACHE_DURATION) {
-    const topCards = await fetchTopCards();
-    cachedTopCards = { cards: topCards, timestamp: now };
-    return topCards;
-  }
-
-  return cachedTopCards.cards;
+  // Altijd vers ophalen, geen caching meer
+  return await fetchTopCards();
 }
