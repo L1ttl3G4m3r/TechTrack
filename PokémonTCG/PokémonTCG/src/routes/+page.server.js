@@ -1,6 +1,9 @@
-import { getCardData } from '$lib/api/server.js';
+import { getCardData } from "$lib/api/server.js";
 
 export async function load() {
-  const { card, timeLeft } = await getCardData();
-  return { card, timeLeft };
+  const data = await getCardData();
+  return {
+    card: data.card,
+    timeLeft: data.timeLeft
+  };
 }
