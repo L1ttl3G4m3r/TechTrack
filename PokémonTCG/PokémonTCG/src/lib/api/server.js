@@ -53,7 +53,7 @@ export async function getCardData() {
 async function fetchTopCards() {
   try {
     const res = await fetch(
-      `https://www.pokemonpricetracker.com/api/v2/cards?minPrice=1500&sortBy=price&sortOrder=desc&limit=9`,
+      `https://www.pokemonpricetracker.com/api/v2/cards?minPrice=800&sortBy=price&sortOrder=desc&limit=18`,
       {
         headers: { Authorization: `Bearer ${SECRET_API_KEY}` }
       }
