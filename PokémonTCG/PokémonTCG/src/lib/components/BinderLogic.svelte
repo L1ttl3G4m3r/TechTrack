@@ -7,24 +7,24 @@
 
   let currentPage = 1;
   let displayedCards = [...topCardsPage1];
-  let sortOption = "price";
+  let sortOption = "marketPrice";
   let showOverlay = false;
 
-  // Sorteerfunctie
+  // Sorteer functie
   function sortCards(option) {
     sortOption = option;
     const cards = currentPage === 1 ? topCardsPage1 : topCardsPage2;
 
-    if(option === "price") {
-      displayedCards = [...cards].sort((a, b) => b.price - a.price);
-    } else if(option === "rarity") {
+    if (option === "marketPrice") {
+      displayedCards = [...cards].sort((a, b) => (b.marketPrice ?? 0) - (a.marketPrice ?? 0));
+    } else if (option === "rarity") {
       const rarityOrder = ["Common","Uncommon","Rare","Rare Holo","Ultra Rare","Secret Rare"];
       displayedCards = [...cards].sort((a, b) => {
         const aIndex = rarityOrder.indexOf(a.rarity ?? "") ?? 99;
         const bIndex = rarityOrder.indexOf(b.rarity ?? "") ?? 99;
         return aIndex - bIndex;
       });
-    } else if(option === "name") {
+    } else if (option === "name") {
       displayedCards = [...cards].sort((a, b) => a.name.localeCompare(b.name));
     }
   }
@@ -35,11 +35,14 @@
 
   // Paginering
   function goToPage(page) {
-    if(page < 1 || page > 2) return;
+    if (page < 1 || page > 2) return;
     currentPage = page;
     displayedCards = page === 1 ? [...topCardsPage1] : [...topCardsPage2];
     sortCards(sortOption);
   }
+
+  // Init sort
+  $: sortCards(sortOption);
 </script>
 
 <div class="binder-logic">
@@ -49,21 +52,20 @@
     <div class="sort-dropdown">
       <label for="sort">Sorteer op:</label>
       <select id="sort" bind:value={sortOption} on:change={() => sortCards(sortOption)}>
-        <option value="price">Prijs: Hoog → Laag</option>
+        <option value="marketPrice">Prijs: Hoog → Laag</option>
         <option value="rarity">Zeldzaamheid</option>
         <option value="name">Naam: A → Z</option>
       </select>
     </div>
   </div>
 
-  <!-- Kaarten grid -->
+  <!-- Grid -->
   <BinderGrid cards={displayedCards} />
 
   <!-- Overlay -->
-    {#if showOverlay}
+  {#if showOverlay}
     <BinderOverlay cards={displayedCards} onClose={closeOverlay} />
-    {/if}
-
+  {/if}
 
   <!-- Paginering -->
   <div class="pagination">
