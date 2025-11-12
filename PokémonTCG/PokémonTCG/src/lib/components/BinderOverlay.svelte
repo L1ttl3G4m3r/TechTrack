@@ -89,7 +89,7 @@
 </script>
 
 <div class="overlay">
-  <button class="close-overlay" on:click={onClose}>← Terug</button>
+  <button class="close-overlay" on:click={() => onClose?.()}>← Terug</button>
   <button class="overlay-btn" on:click={toggleChart} style="position:absolute; top:1rem; right:1rem;">
     {chartType === 'line' ? 'Bar Chart' : 'Line Chart'}
   </button>

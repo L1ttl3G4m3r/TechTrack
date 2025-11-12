@@ -60,9 +60,10 @@
   <BinderGrid cards={displayedCards} />
 
   <!-- Overlay -->
-  {#if showOverlay}
-    <BinderOverlay cards={displayedCards} on:close={closeOverlay} />
-  {/if}
+    {#if showOverlay}
+    <BinderOverlay cards={displayedCards} onClose={closeOverlay} />
+    {/if}
+
 
   <!-- Paginering -->
   <div class="pagination">
