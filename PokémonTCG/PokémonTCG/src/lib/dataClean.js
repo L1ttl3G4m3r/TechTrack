@@ -21,7 +21,7 @@ export async function getRandomCard() {
 // ---------------------------
 // TOP CARDS
 // ---------------------------
-export async function getTopCards(limit = 18) {
+export async function getTopCards(limit = 1) {
   const json = await fetchTopCards(limit);
 
   console.log("Top cards raw JSON:", json);
@@ -41,26 +41,32 @@ export async function getTopCards(limit = 18) {
 }
 
 // ---------------------------
-// HISTORY PER CARD
+// HISTORY PER CARD (alleen Near Mint)
 // ---------------------------
-export async function getCardHistory(card, days = 90) {
+export async function getCardHistory(card, days = 3) {
   if (!card?.tcgPlayerId) return [];
 
   const json = await fetchCardHistory(card.tcgPlayerId, days);
 
-  console.log(`History raw JSON for card ${card.name}:`, json);
+  // Pak alleen de Near Mint history
+  const conditions = json?.data?.priceHistory?.conditions;
+  const nearMintHistory = conditions?.["Near Mint"]?.history;
 
-  const historyRaw = json?.data?.[0]?.priceHistory || [];
+  if (!nearMintHistory) {
+    console.warn(`⚠️ No Near Mint history for ${card.name}`);
+    return [];
+  }
 
-  return historyRaw
-    .map(h => ({
-      date: new Date(h.date),
-      marketPrice: Number(h.market ?? 0) // gebruik h.market
-    }))
-    .filter(h => h.date);
+  // Map to only date and marketPrice
+  const historyPoints = nearMintHistory.map(point => ({
+    date: point.date,
+    marketPrice: Number(point.market ?? 0)
+  }));
 
-    console.log(`Mapped history for card ${card.name}:`, history);
-    return history;
+  // Alleen de return loggen
+  console.log(`History for ${card.name}:`, historyPoints);
+
+  return historyPoints;
 }
 
 // ---------------------------
@@ -72,10 +78,9 @@ export async function getTopCardsWithHistory(limit = 18, days = 90) {
   const cardsWithHistory = await Promise.all(
     topCards.map(async card => {
       const history = await getCardHistory(card, days);
-      return { ...card, history };
+      return { ...card, history }; // history toegevoegd
     })
   );
 
-  console.log("Top cards with history:", cardsWithHistory);
   return cardsWithHistory;
 }

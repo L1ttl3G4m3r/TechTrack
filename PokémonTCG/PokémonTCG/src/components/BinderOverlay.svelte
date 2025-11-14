@@ -2,40 +2,21 @@
   import * as d3 from "d3";
   import { tick } from "svelte";
 
-  export let cards = []; // van BinderLogic
+  export let cards = []; // kaarten met history van getCardHistory
   export let onClose;
 
   let svgContainer;
   let containerEl;
 
-  // Re-render pas als alles aanwezig is
+  // Wacht tot DOM klaar is
   $: if (svgContainer && containerEl && cards?.length) {
     renderWhenReady();
   }
 
   async function renderWhenReady() {
-    await tick(); // wacht tot DOM klaar is
+    await tick();
     if (!cards?.length) return;
     renderMultiLineChart();
-  }
-
-  function extractHistory(card) {
-    const variantKeys = Object.keys(card.variants || {});
-    if (!variantKeys.length) return [];
-
-    const firstVariant = card.variants[variantKeys[0]];
-    const conditionKeys = Object.keys(firstVariant || {});
-    if (!conditionKeys.length) return [];
-
-    const allHistories = conditionKeys.flatMap(cond => {
-      const entries = firstVariant[cond]?.history || [];
-      return entries.map(h => ({
-        date: new Date(h.date),
-        marketPrice: Number(h.market ?? h.marketPrice ?? 0)
-      }));
-    });
-
-    return allHistories.sort((a, b) => a.date - b.date);
   }
 
   function renderMultiLineChart() {
@@ -50,12 +31,10 @@
     const ninetyDaysAgo = new Date();
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
+    // Gebruik alleen kaarten met history
     const series = cards
-      .map(card => ({
-        ...card,
-        history: extractHistory(card).filter(h => h.date >= ninetyDaysAgo)
-      }))
-      .filter(card => card.history.length > 0);
+      .map(card => ({ ...card, history: card.history }))
+      .filter(card => card.history?.length > 0);
 
     if (!series.length) {
       svg.append("text")
