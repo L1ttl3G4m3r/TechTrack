@@ -1,8 +1,8 @@
 <script>
+  export let data;
+
   import BinderLogic from '../../components/BinderLogic.svelte';
   import pokeballImg from '$lib/Images/pokeball.png';
-
-  export let data;
 
   // Data is al klaar voor gebruik
   const { topCardsPage1 = [], topCardsPage2 = [] } = data;

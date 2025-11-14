@@ -60,7 +60,7 @@
   </div>
 
   <!-- Grid -->
-  <BinderGrid {displayedCards} />
+  <BinderGrid cards={displayedCards} />
 
   <!-- Overlay -->
   {#if showOverlay}

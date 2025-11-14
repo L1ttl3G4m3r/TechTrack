@@ -3,7 +3,7 @@
     id?: string;
     name: string;
     image: string;
-    price?: number;
+    marketPrice?: number;
     rarity?: string;
     setName?: string;
   } | null = null;
@@ -11,12 +11,12 @@
 
 {#if card}
   <div class="card">
-    <div class="glow"></div>
+    <div></div>
     <img src={card.image} alt={card.name} />
     <h2>{card.name}</h2>
     <p>Set: {card.setName || "Onbekend"}</p>
     <p>Zeldzaamheid: {card.rarity || "Onbekend"}</p>
-    <p>Prijs: {card.price ? `$${card.price.toFixed(2)}` : "N/A"}</p>
+    <p>Prijs: {card.marketPrice ? `$${card.marketPrice.toFixed(2)}` : "N/A"}</p>
   </div>
 {:else}
   <p>No card available.</p>
