@@ -1,95 +1,114 @@
 /* ------------------------- */
+/* Root variabelen voor dynamische styling */
+/* ------------------------- */
+:root {
+  --body-bg: #8b0000;
+  --text-color: white;
+  --card-border: #ffd700;
+  --card-bg: #b00000;
+  --card-radius: 2rem;
+  --card-glow: #ffea00;
+  --button-bg: white;
+  --button-color: #b00000;
+  --button-hover-bg: #ffd700;
+  --button-hover-color: black;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --arrow-bg: #ffcb05;
+  --arrow-hover-bg: #ffdb4d;
+}
+
+/* ------------------------- */
 /* Body en algemene achtergrond */
 /* ------------------------- */
 * {
-	margin: 0;
-	font-family: system-ui, sans-serif;
-	background-color: #8b0000;
-	color: white;
-	box-sizing: border-box;
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-color);
+  box-sizing: border-box;
 }
 
 html, body {
-	width: 100%;
-	height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 /* ------------------------- */
 /* Grid / container styling */
 /* ------------------------- */
 .background {
-	display: grid;
-	place-items: center;
-	min-height: 100vh;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
 }
 
 .binder-background {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 2rem;
-	min-height: 100vh;
-	color: white;
-	position: relative;
-	text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+  color: var(--text-color);
+  position: relative;
+  text-align: center;
 }
 
 /* ------------------------- */
 /* Kaart / Card styling */
 /* ------------------------- */
 .card {
-	position: relative;
-	padding: 1rem;
-	border-radius: 2rem;
-	border: 6px solid #ffd700;
-	box-shadow: 0 0 30px #ffd700;
-	background: #b00000;
+  position: relative;
+  padding: 1rem;
+  border-radius: var(--card-radius);
+  border: 6px solid var(--card-border);
+  box-shadow: 0 0 30px var(--card-border);
+  background: var(--card-bg);
 }
 
-.card-image {
-	width: 100%;
-	max-width: 150px;
-	height: auto;
-	border-radius: 8px;
+.card img {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  border-radius: 8px;
 }
 
 .glow {
-	position: absolute;
-	inset: 0;
-	border-radius: 2rem;
-	border: 6px solid #ffea00;
-	animation: glowPulse 3s ease-in-out infinite alternate;
-	pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 6px solid var(--card-glow);
+  animation: glowPulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 /* ------------------------- */
 /* Tekst en content */
 /* ------------------------- */
 .text-content {
-	display: grid;
-	place-items: center;
-	text-align: center;
-	gap: 1.5rem;
-	position: relative;
-	z-index: 1;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .text-content h1 {
-	font-size: 3rem;
-	font-weight: bold;
-	text-shadow: 0 0 10px #ffd700;
-	margin-bottom: 1rem;
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--card-border);
+  margin-bottom: 1rem;
 }
 
 .text-content p,
 .text-content #copyright {
-	font-size: 1.5rem;
-	text-shadow: 0 0 10px #ffd700;
-	margin: 0;
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px var(--card-border);
+  margin: 0;
 }
 
 .text-content #copyright {
-	font-size: 1rem;
+  font-size: 1rem;
 }
 
 /* ------------------------- */
@@ -99,212 +118,206 @@ button,
 .overlay-btn,
 .close-overlay,
 select {
-	font-weight: bold;
-	cursor: pointer;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 button {
-	background: white;
-	color: #b00000;
-	font-size: 1rem;
-	padding: 1rem 2rem;
-	border: none;
-	border-radius: 1rem;
-	transition: 0.3s;
-	box-shadow: 0 0 15px #ffd700;
+  background: var(--button-bg);
+  color: var(--button-color);
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 1rem;
+  transition: 0.3s;
+  box-shadow: 0 0 15px var(--card-border);
 }
 
 button:hover {
-	background: #ffd700;
-	color: black;
+  background: var(--button-hover-bg);
+  color: var(--button-hover-color);
 }
 
 .controls {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-	margin-bottom: 1.5rem;
-	flex-wrap: wrap;
-	justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .overlay-btn {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: 50px;
-	height: 50px;
-	background: #ffd700;
-	border: none;
-	padding: 0;
-	border-radius: 0.5rem;
-	font-size: 1.2rem;
-	box-shadow: 0 0 5px #ffd700;
-	transition: background 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  background: var(--card-border);
+  border: none;
+  padding: 0;
+  border-radius: 0.5rem;
+  font-size: 1.2rem;
+  box-shadow: 0 0 5px var(--card-border);
+  transition: background 0.3s;
 }
 
 .overlay-btn:hover {
-	background: #fff;
+  background: white;
 }
 
 .sort-dropdown,
 .select-dropdown {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 select {
-	padding: 0.4rem 0.6rem;
-	border-radius: 0.5rem;
-	border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: none;
 }
 
 /* ------------------------- */
 /* Binder grid */
 /* ------------------------- */
 .binder-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 1rem;
-	justify-items: center;
-	width: 100%;
-	max-width: 900px;
-	margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 2rem;
 }
 
 /* ------------------------- */
 /* Responsive: telefoons en tablets */
 /* ------------------------- */
 @media (max-width: 768px) {
-	.binder-grid {
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.5rem;
-	}
-	.card-image {
-		max-width: 100px;
-	}
+  .binder-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .card img {
+    max-width: 100px;
+  }
 }
 
 @media (max-width: 480px) {
-	.binder-grid {
-		grid-template-columns: repeat(3, 1fr);
-		gap: 0.5rem;
-	}
-	.card-image {
-		max-width: 90px;
-	}
+  .binder-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .card img {
+    max-width: 90px;
+  }
 }
 
 /* ------------------------- */
 /* Overlay / D3 */
 /* ------------------------- */
 .overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.7);
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .close-overlay {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	background: #ffd700;
-	border: none;
-	padding: 0.5rem 1rem;
-	border-radius: 0.5rem;
-	box-shadow: 0 0 5px #ffd700;
-	transition: background 0.3s;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--card-border);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px var(--card-border);
+  transition: background 0.3s;
 }
 
 .close-overlay:hover {
-	background: #fff;
+  background: white;
 }
 
 /* ------------------------- */
 /* Pokéball navigatie link */
 /* ------------------------- */
 .pokeball-link {
-	position: absolute;
-	top: 1rem;
-	left: 1rem;
-	width: 50px;
-	height: 50px;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 50px;
+  height: 50px;
 }
 
 .pokeball-link img {
-	width: 100%;
-	height: 100%;
-	display: block;
-	border: none;
-	box-shadow: none;
-	transition: transform 0.2s ease;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.2s ease;
 }
 
 .pokeball-link img:hover {
-	transform: scale(1.2);
+  transform: scale(1.2);
 }
 
 /* ------------------------- */
 /* Paginering en arrows */
 /* ------------------------- */
 .pagination {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-top: 20px;
-	margin-bottom: 20px;
-	gap: 10px;
-	font-weight: bold;
-	font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .arrow {
-	background-color: #ffcb05;
-	border: none;
-	padding: 8px 12px;
-	border-radius: 6px;
-	cursor: pointer;
-	font-size: 1.2rem;
-	transition: background 0.2s;
+  background-color: var(--arrow-bg);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s;
 }
 
 .arrow:disabled {
-	opacity: 0.4;
-	cursor: default;
+  opacity: 0.4;
+  cursor: default;
 }
 
 .arrow:hover:not(:disabled) {
-	background-color: #ffdb4d;
-}
-
-.page-number {
-	min-width: 50px;
-	text-align: center;
+  background-color: var(--arrow-hover-bg);
 }
 
 /* ------------------------- */
 /* Glow animatie keyframes */
 /* ------------------------- */
 @keyframes glowPulse {
-	0% {
-		box-shadow: 0 0 20px #ffd700, 0 0 40px #ffea00;
-		opacity: 0.9;
-	}
-	50% {
-		box-shadow: 0 0 40px #ffe066, 0 0 80px #ffea00;
-		opacity: 1;
-	}
-	100% {
-		box-shadow: 0 0 20px #ffd700, 0 0 40px #ffea00;
-		opacity: 0.9;
-	}
+  0% {
+    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
+    opacity: 0.9;
+  }
+  50% {
+    box-shadow: 0 0 40px #ffe066, 0 0 80px var(--card-glow);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
+    opacity: 0.9;
+  }
 }

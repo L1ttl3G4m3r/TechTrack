@@ -20,7 +20,6 @@
   }
 
   function extractHistory(card) {
-    // probeer data op te halen uit nested structuur
     const variantKeys = Object.keys(card.variants || {});
     if (!variantKeys.length) return [];
 
@@ -28,7 +27,6 @@
     const conditionKeys = Object.keys(firstVariant || {});
     if (!conditionKeys.length) return [];
 
-    // Combineer alle conditions in één array
     const allHistories = conditionKeys.flatMap(cond => {
       const entries = firstVariant[cond]?.history || [];
       return entries.map(h => ({
@@ -37,13 +35,10 @@
       }));
     });
 
-    // Sorteer op datum
     return allHistories.sort((a, b) => a.date - b.date);
   }
 
   function renderMultiLineChart() {
-    console.log("📊 Ontvangen kaarten in overlay:", cards);
-
     const svg = d3.select(svgContainer);
     svg.selectAll("*").remove();
 
@@ -62,13 +57,12 @@
       }))
       .filter(card => card.history.length > 0);
 
-    // Geen data? Toon melding
     if (!series.length) {
       svg.append("text")
         .attr("x", width / 2)
         .attr("y", height / 2)
         .attr("text-anchor", "middle")
-        .attr("fill", "#fff")
+        .attr("fill", "var(--text-color)")
         .text("Geen historische data beschikbaar");
       return;
     }
@@ -86,7 +80,7 @@
       .domain(series.map(s => s.name))
       .range(d3.schemeTableau10.concat(d3.schemeSet3));
 
-    // Assen tekenen
+    // Assen
     svg.append("g")
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b %d")))
@@ -103,16 +97,24 @@
       .y(d => y(d.marketPrice))
       .curve(d3.curveMonotoneX);
 
+    // Tooltip groep
     const tooltipGroup = svg.append("g").style("display", "none");
     const tooltipRect = tooltipGroup.append("rect")
-      .attr("fill", "black").attr("opacity", 0.8).attr("rx", 4).attr("ry", 4);
+      .attr("fill", "black")
+      .attr("opacity", 0.8)
+      .attr("rx", 4)
+      .attr("ry", 4);
     const tooltipText = tooltipGroup.append("text")
-      .attr("fill", "white").attr("font-size", 12).attr("dy", "1em");
+      .attr("fill", "white")
+      .attr("font-size", 12)
+      .attr("dy", "1em");
     const tooltipImage = tooltipGroup.append("image")
-      .attr("width", 50).attr("height", 70)
+      .attr("width", 50)
+      .attr("height", 70)
       .attr("x", 0)
       .attr("y", -70);
 
+    // Lijnen tekenen
     const lines = svg.selectAll(".serie")
       .data(series)
       .enter()
@@ -124,7 +126,7 @@
       .attr("fill", "none")
       .attr("stroke", d => color(d.name))
       .attr("stroke-width", 2)
-      .on("mouseover", function(event, d) {
+      .on("mouseover", function() {
         d3.select(this).attr("stroke-width", 3);
         tooltipGroup.style("display", null);
       })
@@ -141,6 +143,7 @@
         tooltipGroup.style("display", "none");
       });
 
+    // Circles op laatste punt
     lines.append("circle")
       .attr("r", 4)
       .attr("cx", d => x(d.history[d.history.length - 1].date))
@@ -159,17 +162,18 @@
       })
       .on("mouseout", () => tooltipGroup.style("display", "none"));
 
+    // Titel
     svg.append("text")
       .attr("x", (margin.left + (width - margin.right)/2))
       .attr("y", 28)
       .attr("text-anchor", "middle")
-      .attr("fill", "#ffcb05")
+      .attr("fill", "var(--card-border)")
       .attr("font-size", 18)
       .text("Waardeontwikkeling van Top Pokémon Kaarten (90 dagen)");
   }
 </script>
 
 <div bind:this={containerEl} class="overlay">
-  <button on:click={() => onClose?.()}>← Terug</button>
+  <button class="close-overlay" on:click={() => onClose?.()}>← Terug</button>
   <svg bind:this={svgContainer}></svg>
 </div>

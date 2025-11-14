@@ -1,16 +1,12 @@
 <script>
+  import Card from './Card.svelte';
   export let cards = [];
 </script>
 
 {#if cards.length > 0}
   <div class="binder-grid">
     {#each cards as card}
-      <div class="card">
-        <img src={card.image} alt={card.name} />
-        <h3>{card.name}</h3>
-        <p>{card.setName} | {card.rarity}</p>
-        <p>€{card.price}</p>
-      </div>
+      <Card {card} />
     {/each}
   </div>
 {:else}

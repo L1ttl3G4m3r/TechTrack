@@ -18,7 +18,12 @@
 </script>
 
 {#if randomCard}
-  <img src={randomCard.image} alt={randomCard.setName} class="card-image" />
+  <div>
+    <div></div>
+    <img src={randomCard.image} alt="Random Pokémon" />
+  </div>
 {:else}
-  <p>Een willekeurige kaart wordt geladen<span class="dots">{dots}</span></p>
+  <p>
+    Een willekeurige kaart wordt geladen<span class="dots">{dots}</span>
+  </p>
 {/if}
