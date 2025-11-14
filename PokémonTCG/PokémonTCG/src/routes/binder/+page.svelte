@@ -1,5 +1,5 @@
 <script>
-  import BinderLogic from '$lib/components/BinderLogic.svelte';
+  import BinderLogic from '../../components/BinderLogic.svelte';
   import pokeballImg from '$lib/Images/pokeball.png';
 
   // Data komt van de load-functie in +page.server.js

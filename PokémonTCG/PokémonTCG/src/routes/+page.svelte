@@ -1,6 +1,6 @@
 <script>
   export let data;
-  import RandomCard from "$lib/components/RandomCard.svelte";
+  import RandomCard from "../components/RandomCard.svelte";
 </script>
 
 <div class="background">

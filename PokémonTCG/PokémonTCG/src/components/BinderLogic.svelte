@@ -1,6 +1,6 @@
 <script>
-  import BinderGrid from '$lib/components/BinderGrid.svelte';
-  import BinderOverlay from '$lib/components/BinderOverlay.svelte';
+  import BinderGrid from './BinderGrid.svelte';
+  import BinderOverlay from './BinderOverlay.svelte';
 
   export let topCardsPage1 = [];
   export let topCardsPage2 = [];
