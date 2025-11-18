@@ -53,11 +53,11 @@ export async function getCardHistory(card, days = 3) {
   const nearMintHistory = conditions?.["Near Mint"]?.history;
 
   if (!nearMintHistory) {
-    console.warn(`⚠️ No Near Mint history for ${card.name}`);
+    console.warn(`No Near Mint history for ${card.name}`);
     return [];
   }
 
-  // Map to only date and marketPrice
+  // Map alleen de date en marketPrice
   const historyPoints = nearMintHistory.map(point => ({
     date: point.date,
     marketPrice: Number(point.market ?? 0)

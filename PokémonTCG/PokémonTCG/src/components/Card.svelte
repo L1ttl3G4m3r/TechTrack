@@ -16,7 +16,7 @@
     <h2>{card.name}</h2>
     <p>Set: {card.setName || "Onbekend"}</p>
     <p>Zeldzaamheid: {card.rarity || "Onbekend"}</p>
-    <p>Prijs: {card.marketPrice ? `$${card.marketPrice.toFixed(2)}` : "N/A"}</p>
+    <p>Prijs: {card.marketPrice ? `€${card.marketPrice.toFixed(2)}` : "N/A"}</p>
   </div>
 {:else}
   <p>No card available.</p>
