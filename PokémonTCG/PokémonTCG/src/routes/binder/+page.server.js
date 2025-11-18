@@ -2,7 +2,7 @@ import { getTopCardsWithHistory } from '$lib/dataClean.js';
 
 export async function load() {
   try {
-    // Bijvoorbeeld 18 kaarten in totaal, splitst over twee "pagina's"
+    // 18 kaarten in totaal, splitst over twee "pagina's"
     const allTopCards = await getTopCardsWithHistory(18);
 
     const topCardsPage1 = allTopCards.slice(0, 9);

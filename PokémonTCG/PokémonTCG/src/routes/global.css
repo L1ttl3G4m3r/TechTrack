@@ -1,5 +1,5 @@
 /* ------------------------- */
-/* Root variabelen voor dynamische styling */
+/* Root variabelen voor thema */
 /* ------------------------- */
 :root {
   --body-bg: #8b0000;
@@ -13,19 +13,17 @@
   --button-hover-bg: #ffd700;
   --button-hover-color: black;
   --overlay-bg: rgba(0, 0, 0, 0.7);
-  --arrow-bg: #ffcb05;
-  --arrow-hover-bg: #ffdb4d;
 }
 
 /* ------------------------- */
-/* Body en algemene achtergrond */
+/* Algemene reset & body styling */
 /* ------------------------- */
 * {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background-color: var(--body-bg);
-  color: var(--text-color);
   box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  color: var(--text-color);
+  background-color: var(--body-bg);
 }
 
 html, body {
@@ -34,27 +32,34 @@ html, body {
 }
 
 /* ------------------------- */
-/* Grid / container styling */
+/* Containers & grid layouts */
 /* ------------------------- */
-.background {
+.background,
+.binder-background {
   display: grid;
   place-items: center;
   min-height: 100vh;
-}
-
-.binder-background {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  min-height: 100vh;
-  color: var(--text-color);
-  position: relative;
   text-align: center;
 }
 
+.binder-background {
+  flex-direction: column;
+  padding: 2rem;
+  position: relative;
+}
+
+.binder-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 2rem;
+}
+
 /* ------------------------- */
-/* Kaart / Card styling */
+/* Kaarten / Card styling */
 /* ------------------------- */
 .card {
   position: relative;
@@ -72,6 +77,7 @@ html, body {
   border-radius: 8px;
 }
 
+/* Glow effect */
 .glow {
   position: absolute;
   inset: 0;
@@ -81,13 +87,23 @@ html, body {
   pointer-events: none;
 }
 
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
+    opacity: 0.9;
+  }
+  50% {
+    box-shadow: 0 0 40px #ffe066, 0 0 80px var(--card-glow);
+    opacity: 1;
+  }
+}
+
 /* ------------------------- */
-/* Tekst en content */
+/* Tekst content */
 /* ------------------------- */
 .text-content {
   display: grid;
   place-items: center;
-  text-align: center;
   gap: 1.5rem;
   position: relative;
   z-index: 1;
@@ -112,7 +128,7 @@ html, body {
 }
 
 /* ------------------------- */
-/* Knoppen */
+/* Knoppen & dropdowns */
 /* ------------------------- */
 button,
 .overlay-btn,
@@ -138,13 +154,29 @@ button:hover {
   color: var(--button-hover-color);
 }
 
-.controls {
+.controls,
+.sort-dropdown,
+.select-dropdown {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
   justify-content: center;
+  flex-wrap: wrap;
+}
+
+select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.overlay-btn,
+.close-overlay {
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px var(--card-border);
+  transition: background 0.3s;
 }
 
 .overlay-btn {
@@ -154,69 +186,16 @@ button:hover {
   width: 50px;
   height: 50px;
   background: var(--card-border);
-  border: none;
-  padding: 0;
-  border-radius: 0.5rem;
   font-size: 1.2rem;
-  box-shadow: 0 0 5px var(--card-border);
-  transition: background 0.3s;
 }
 
-.overlay-btn:hover {
+.overlay-btn:hover,
+.close-overlay:hover {
   background: white;
 }
 
-.sort-dropdown,
-.select-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-select {
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.5rem;
-  border: none;
-}
-
 /* ------------------------- */
-/* Binder grid */
-/* ------------------------- */
-.binder-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  justify-items: center;
-  width: 100%;
-  max-width: 900px;
-  margin-top: 2rem;
-}
-
-/* ------------------------- */
-/* Responsive: telefoons en tablets */
-/* ------------------------- */
-@media (max-width: 768px) {
-  .binder-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-  }
-  .card img {
-    max-width: 100px;
-  }
-}
-
-@media (max-width: 480px) {
-  .binder-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-  }
-  .card img {
-    max-width: 90px;
-  }
-}
-
-/* ------------------------- */
-/* Overlay / D3 */
+/* Overlay / modals met border-radius */
 /* ------------------------- */
 .overlay {
   position: fixed;
@@ -230,6 +209,7 @@ select {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: auto;
 }
 
 .close-overlay {
@@ -241,7 +221,8 @@ select {
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 5px var(--card-border);
-  transition: background 0.3s;
+  cursor: pointer;
+  z-index: 1010;
 }
 
 .close-overlay:hover {
@@ -249,7 +230,7 @@ select {
 }
 
 /* ------------------------- */
-/* Pokéball navigatie link */
+/* Pokéball navigatie link (linksboven) */
 /* ------------------------- */
 .pokeball-link {
   position: absolute;
@@ -273,7 +254,7 @@ select {
 }
 
 /* ------------------------- */
-/* Paginering en arrows */
+/* Pagina navigatie / arrows */
 /* ------------------------- */
 .pagination {
   display: flex;
@@ -286,7 +267,7 @@ select {
 }
 
 .arrow {
-  background-color: var(--arrow-bg);
+  background-color: var(--button-bg);
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
@@ -301,23 +282,23 @@ select {
 }
 
 .arrow:hover:not(:disabled) {
-  background-color: var(--arrow-hover-bg);
+  background-color: var(--button-hover-bg);
 }
 
 /* ------------------------- */
-/* Glow animatie keyframes */
+/* Responsive voor kleinere schermen */
 /* ------------------------- */
-@keyframes glowPulse {
-  0% {
-    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
-    opacity: 0.9;
+@media (max-width: 768px) {
+  .binder-grid {
+    gap: 0.5rem;
   }
-  50% {
-    box-shadow: 0 0 40px #ffe066, 0 0 80px var(--card-glow);
-    opacity: 1;
+  .card img {
+    max-width: 100px;
   }
-  100% {
-    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
-    opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+  .card img {
+    max-width: 90px;
   }
 }
