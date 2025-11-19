@@ -1,9 +1,13 @@
 import { getTopCardsWithHistory } from '$lib/dataClean.js';
+import { extractColor } from '$lib/server/extractColor.js';
 
 export async function load() {
   try {
-    // 18 kaarten in totaal, splitst over twee "pagina's"
     const allTopCards = await getTopCardsWithHistory(18);
+
+    for (const card of allTopCards) {
+      card._dominantColor = await extractColor(card.image);
+    }
 
     const topCardsPage1 = allTopCards.slice(0, 9);
     const topCardsPage2 = allTopCards.slice(9, 18);

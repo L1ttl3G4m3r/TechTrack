@@ -1,7 +1,6 @@
 <script>
   import * as d3 from "d3";
   import { tick } from "svelte";
-  import { Vibrant } from "node-vibrant/browser"; // Vibrant voor dominante kleuren
 
   export let cards = [];
   export let onClose;    // Functie voor het sluiten van de overlay
@@ -12,31 +11,18 @@
   // -----------------------
   // Functie: haal dominante kleur van een afbeelding
   // -----------------------
-  async function extractColor(url) {
-    try {
-      const palette = await Vibrant.from(url).getPalette();
-      const rgb = palette.Vibrant?.rgb || [180, 180, 180]; // fallback kleur
-      return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-    } catch (err) {
-      console.error("Kleur extractie fout:", err);
-      return "rgb(180,180,180)"; // fallback bij fout
-    }
-  }
-
-  // -----------------------
-  // Functie: preload dominante kleuren voor alle kaarten
-  // -----------------------
-  $: if (cards?.length) preloadColors();  // Reageert op wijziging in cards
   async function preloadColors() {
     for (const card of cards) {
-      // Als kaart nog geen kleur heeft, haal deze op
       if (!card._dominantColor) {
         card._dominantColor = await extractColor(card.image);
       }
     }
-    await tick(); // Wacht tot DOM is bijgewerkt
-    renderChart(); // Render grafiek zodra kleuren bekend zijn
+    await tick();
+    renderChart();
   }
+
+  // reactive call
+  $: if (cards?.length) preloadColors();
 
   // -----------------------
   // Functie: render de grafiek
