@@ -52,7 +52,7 @@ async function fetchFromAPI(url) {
 // Haal één Pokémon-kaart op op basis van de naam
 export async function fetchCardByName(name) {
   const encodedName = encodeURIComponent(name);
-  const url = `https://www.pokemonpricetracker.com/api/v2/cards?search=${encodedName}&limit=1`;
+  const url = `https://www.pokemonpricetracker.com/api/v2/cards?search=${encodedName}&limit=5`;
   return await fetchFromAPI(url);
 }
 
