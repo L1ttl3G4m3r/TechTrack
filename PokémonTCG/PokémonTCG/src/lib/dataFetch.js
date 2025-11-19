@@ -4,15 +4,16 @@ import { SECRET_API_KEY } from '$env/static/private';
 // Lijst met bekende Pokémon-namen
 // ---------------------------
 export const pokemonNames = [
-  "Pikachu",
+  "Greninja",
+  "Lucario",
+  "Mimikyu",
   "Charizard",
-  "Bulbasaur",
-  "Squirtle",
-  "Eevee",
-  "Mewtwo",
-  "Gyarados",
-  "Snorlax",
-  "Celebi"
+  "Umbreon",
+  "Sylveon",
+  "Garchomp",
+  "Rayquaza",
+  "Gardevoir",
+  "Gengar"
 ];
 
 // ---------------------------
