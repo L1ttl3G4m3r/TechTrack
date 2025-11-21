@@ -1,0 +1,304 @@
+/* ------------------------- */
+/* Root variabelen voor thema */
+/* ------------------------- */
+:root {
+  --body-bg: #8b0000;
+  --text-color: white;
+  --card-border: #ffd700;
+  --card-bg: #b00000;
+  --card-radius: 2rem;
+  --card-glow: #ffea00;
+  --button-bg: white;
+  --button-color: #b00000;
+  --button-hover-bg: #ffd700;
+  --button-hover-color: black;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+}
+
+/* ------------------------- */
+/* Algemene reset & body styling */
+/* ------------------------- */
+* {
+  margin: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  color: var(--text-color);
+  background-color: var(--body-bg);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+/* ------------------------- */
+/* Containers & grid layouts */
+/* ------------------------- */
+.background,
+.binder-background {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.binder-background {
+  flex-direction: column;
+  padding: 2rem;
+  position: relative;
+}
+
+.binder-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  justify-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 2rem;
+}
+
+/* ------------------------- */
+/* Kaarten / Card styling */
+/* ------------------------- */
+.card {
+  position: relative;
+  padding: 1rem;
+  border-radius: var(--card-radius);
+  border: 6px solid var(--card-border);
+  box-shadow: 0 0 30px var(--card-border);
+  background: var(--card-bg);
+}
+
+.card img {
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Glow effect */
+.glow {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  border: 6px solid var(--card-glow);
+  animation: glowPulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--card-border), 0 0 40px var(--card-glow);
+    opacity: 0.9;
+  }
+  50% {
+    box-shadow: 0 0 40px #ffe066, 0 0 80px var(--card-glow);
+    opacity: 1;
+  }
+}
+
+/* ------------------------- */
+/* Tekst content */
+/* ------------------------- */
+.text-content {
+  display: grid;
+  place-items: center;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.text-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px var(--card-border);
+  margin-bottom: 1rem;
+}
+
+.text-content p,
+.text-content #copyright {
+  font-size: 1.5rem;
+  text-shadow: 0 0 10px var(--card-border);
+  margin: 0;
+}
+
+.text-content #copyright {
+  font-size: 1rem;
+}
+
+/* ------------------------- */
+/* Knoppen & dropdowns */
+/* ------------------------- */
+button,
+.overlay-btn,
+.close-overlay,
+select {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button {
+  background: var(--button-bg);
+  color: var(--button-color);
+  font-size: 1rem;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 1rem;
+  transition: 0.3s;
+  box-shadow: 0 0 15px var(--card-border);
+}
+
+button:hover {
+  background: var(--button-hover-bg);
+  color: var(--button-hover-color);
+}
+
+.controls,
+.sort-dropdown,
+.select-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.overlay-btn,
+.close-overlay {
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px var(--card-border);
+  transition: background 0.3s;
+}
+
+.overlay-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  background: var(--card-border);
+  font-size: 1.2rem;
+}
+
+.overlay-btn:hover,
+.close-overlay:hover {
+  background: white;
+}
+
+/* ------------------------- */
+/* Overlay / modals met border-radius */
+/* ------------------------- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.close-overlay {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: var(--card-border);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 5px var(--card-border);
+  cursor: pointer;
+  z-index: 1010;
+}
+
+.close-overlay:hover {
+  background: white;
+}
+
+/* ------------------------- */
+/* Pokéball navigatie link (linksboven) */
+/* ------------------------- */
+.pokeball-link {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 50px;
+  height: 50px;
+}
+
+.pokeball-link img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: none;
+  box-shadow: none;
+  transition: transform 0.2s ease;
+}
+
+.pokeball-link img:hover {
+  transform: scale(1.2);
+}
+
+/* ------------------------- */
+/* Pagina navigatie / arrows */
+/* ------------------------- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.arrow {
+  background-color: var(--button-bg);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s;
+}
+
+.arrow:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.arrow:hover:not(:disabled) {
+  background-color: var(--button-hover-bg);
+}
+
+/* ------------------------- */
+/* Responsive voor kleinere schermen */
+/* ------------------------- */
+@media (max-width: 768px) {
+  .binder-grid {
+    gap: 0.5rem;
+  }
+  .card img {
+    max-width: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card img {
+    max-width: 90px;
+  }
+}
