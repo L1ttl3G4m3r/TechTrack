@@ -1,11 +1,18 @@
 <script>
+  // -------------------------
+  // Props en data destructuring
+  // -------------------------
   export let data;
 
   import BinderLogic from '../../components/BinderLogic.svelte';
   import pokeballImg from '$lib/Images/pokeball.png';
 
+  // Haal kaarten per pagina uit data, fallback naar lege array
   const { topCardsPage1 = [], topCardsPage2 = [] } = data;
 
+  // -------------------------
+  // Pokémon termen voor tooltip
+  // -------------------------
   const pokemonTerms = [
     { term: "set", description: "De reeks waar een kaart uitkomt, bijvoorbeeld 'Base Set' of 'Jungle'." },
     { term: "base", description: "De originele set van kaarten die in eerste instantie werden uitgebracht." },
@@ -16,7 +23,9 @@
     { term: "trainer", description: "Kaarten die gebruikt worden om je Pokémon te ondersteunen tijdens het spel." }
   ];
 
-  // Bind dit aan hidden attribuut voor toggling
+  // -------------------------
+  // Tooltip toggle state
+  // -------------------------
   let tooltipVisible = false;
 
   function toggleTooltip() {
@@ -24,26 +33,41 @@
   }
 </script>
 
+<!-- -------------------------
+     Hoofdsectie van de pagina
+------------------------- -->
 <section class="binder-background">
+
+  <!-- -------------------------
+       Pagina header
+  ------------------------- -->
   <header>
     <h1>Welkom bij de Pokémon Binder!</h1>
   </header>
 
+  <!-- -------------------------
+       Introductie & Tooltip
+  ------------------------- -->
   <article>
+    <p>Hier kun je de duurste Pokémon kaarten bekijken.</p>
+
     <p>
-      Hier kun je de duurste Pokémon kaarten bekijken.<br><br>
-      Wil je de prijsontwikkeling van deze kaarten zien?<br>
-      Klik dan op de 📊 knop om de grafieken te bekijken van de afgelopen 90 dagen.<br><br>
-      Klik op de ℹ️ knop om de betekenis te zien van alle Pokémon termen.<br><br>
+      Wil je de prijsontwikkeling van deze kaarten zien? Klik dan op de 📊 knop
+      om de grafieken te bekijken van de afgelopen 90 dagen.
     </p>
 
-    <div>
-      <button aria-label="Pokémon termen uitleg" on:click={toggleTooltip}>
+    <p>
+      Klik op de ℹ️ knop om de betekenis te zien van alle Pokémon termen.
+    </p>
+
+    <!-- Tooltip toggle -->
+    <div class="tooltip-container">
+      <button aria-expanded={tooltipVisible} aria-controls="pokemon-terms" on:click={toggleTooltip}>
         ℹ️
       </button>
 
-      <!-- Tooltip staat altijd in DOM, toggle via hidden -->
-      <div hidden={!tooltipVisible}>
+      <!-- Tooltip lijst -->
+      <div id="pokemon-terms" hidden={!tooltipVisible} class="tooltip-content">
         <ul>
           {#each pokemonTerms as item (item.term)}
             <li><strong>{item.term}:</strong> {item.description}</li>
@@ -53,14 +77,21 @@
     </div>
   </article>
 
-  <br>
-  <section>
+
+  <!-- -------------------------
+       Binder component
+  ------------------------- -->
+  <section class="binder-logic-wrapper">
     <BinderLogic {topCardsPage1} {topCardsPage2} />
   </section>
 
+  <!-- -------------------------
+       Footer met home link
+  ------------------------- -->
   <footer>
     <a href="/" class="pokeball-link" aria-label="Ga terug naar Home">
       <img src={pokeballImg} alt="Home" />
     </a>
   </footer>
+
 </section>

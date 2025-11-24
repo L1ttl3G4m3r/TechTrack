@@ -1,68 +1,111 @@
 <script>
-  import { onMount, onDestroy } from "svelte";
-  import * as d3 from "d3";
+    import { onMount, onDestroy } from "svelte";
+    import * as d3 from "d3";
 
-  export let data; // { cards: [...] }
-  let cards = data?.cards || [];
+    // -------------------------------
+    // Props & lokale state
+    // -------------------------------
+    export let data;
+    let cards = data?.cards || [];
 
-  let dots = ".";
-  let dotsInterval;
-  let container;
+    let dots = ".";
+    let dotsInterval = null;
+    let container = null;
 
-  onMount(() => {
-    dotsInterval = setInterval(() => {
-      dots = dots === "..." ? "." : dots + ".";
-    }, 500);
-
-    if (cards.length > 0) drawCards();
-  });
-
-  onDestroy(() => {
-    clearInterval(dotsInterval);
-  });
-
-  function drawCards() {
-    if (!container) return;
-
-    const width = container.clientWidth;
-    const height = 250; // kleinere hoogte voor compacte waaier
-
-    const svg = d3.select(container)
-      .append("svg")
-      .attr("width", width)
-      .attr("height", height);
-
-    const cardWidth = 120;
-    const cardHeight = 170;
-
-    const centerX = width / 2;
-    const centerY = height / 2 - 40; // positie van de waaier in het kleinere SVG
-
-    cards.forEach((card, i) => {
-      const offset = (i - (cards.length - 1) / 2) * 100;
-      const angle = (i - (cards.length - 1) / 2) * 10;
-
-      svg.append("image")
-        .attr("href", card.image)
-        .attr("width", cardWidth)
-        .attr("height", cardHeight)
-        .attr("x", centerX - cardWidth / 2)
-        .attr("y", centerY - cardHeight / 2)
-        .attr("transform", `translate(${offset}, ${Math.abs(offset)/4}) rotate(${angle}, ${centerX}, ${centerY})`)
-        .style("filter", "drop-shadow(2px 2px 6px rgba(0,0,0,0.5))")
-        .style("opacity", 0)
-        .transition()
-        .duration(800)
-        .delay(i * 150)
-        .style("opacity", 1);
+    // -------------------------------
+    // INITIALISATIE
+    // -------------------------------
+    onMount(() => {
+        startDotsAnimation();
+        if (cards.length > 0) {
+            drawCards();
+        }
     });
-  }
+
+    onDestroy(() => {
+        stopDotsAnimation();
+    });
+
+    // -------------------------------
+    // DOTS LOADING ANIMATIE
+    // -------------------------------
+    function startDotsAnimation() {
+        dotsInterval = setInterval(() => {
+            dots = dots === "..." ? "." : dots + ".";
+        }, 500);
+    }
+
+    function stopDotsAnimation() {
+        if (dotsInterval) clearInterval(dotsInterval);
+    }
+
+    // -------------------------------
+    // REACTIEVE HERTEKENING (wanneer cards wijzigen)
+    // -------------------------------
+    $: if (cards && container) {
+        d3.select(container).select("svg").remove();
+        if (cards.length > 0) drawCards();
+    }
+
+    // -------------------------------
+    // D3 TEKENFUNCTIE
+    // -------------------------------
+    function drawCards() {
+        if (!container) return;
+
+        const width = container.clientWidth;
+        const height = 250;
+
+        // verwijder eventueel oude SVG
+        d3.select(container).select("svg").remove();
+
+        const svg = d3.select(container)
+            .append("svg")
+            .attr("class", "fan-svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet");
+
+        const cardWidth = 120;
+        const cardHeight = 170;
+        const centerX = width / 2;
+        const centerY = height / 2 - 40;
+
+        cards.forEach((card, index) => {
+            drawSingleCard(svg, card, index, cards.length, centerX, centerY, cardWidth, cardHeight);
+        });
+    }
+
+    // -------------------------------
+    // TEKEN EEN ENKELE KAART
+    // -------------------------------
+    function drawSingleCard(svg, card, index, totalCards, centerX, centerY, cardWidth, cardHeight) {
+        const midpoint = (totalCards - 1) / 2;
+        const offset = (index - midpoint) * 90;
+        const angle = (index - midpoint) * 10;
+        const verticalCompensation = Math.abs(offset) / 6;
+
+        // Voeg afbeelding direct toe, zonder animatie of extra class
+        svg.append("image")
+            .attr("href", card.image)
+            .attr("width", cardWidth)
+            .attr("height", cardHeight)
+            .attr("x", centerX - cardWidth / 2)
+            .attr("y", centerY - cardHeight / 2)
+            .attr("transform", `translate(${offset}, ${verticalCompensation}) rotate(${angle}, ${centerX}, ${centerY})`)
+            .attr("opacity", 1); // direct zichtbaar
+    }
 </script>
 
-<div bind:this={container} style="width: 100%; height: 300px; position: relative;">
-  {#if cards.length === 0}
-    <div style="text-align:center; margin-top:50px;">
-      Kaarten worden geladen<span>{dots}</span>
-    </div>
-  {/if}
+<!-- -------------------------------
+     FAN CONTAINER
+------------------------------- -->
+<div class="fan-container" bind:this={container}>
+    {#if cards.length === 0}
+        <div class="fan-loading">
+            <span class="fan-loading__text">Kaarten worden geladen</span>
+            <span class="fan-loading__dots">{dots}</span>
+        </div>
+    {/if}
 </div>
