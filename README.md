@@ -48,7 +48,12 @@ This section lists any major frameworks/libraries used to bootstrap this project
 
 ## Hulpmiddelen
 
-- [example](example)
+- [Pokémon Price Tracker API Documentatie](https://www.pokemonpricetracker.com)
+- [D3 Documentatie](https://d3js.org/getting-started)
+- [SvelteKit Documentatie](https://svelte.dev/docs/kit/introduction)
+- [Project online zetten via Render](https://svelte.dev/docs/kit/building-your-app)
+- [Geschiedenis kaarten ophalen](https://chatgpt.com/c/69147694-a898-8328-8310-74f6cc960042)
+- [Dominante kleur pakken van de kaart](https://chatgpt.com/c/691c86cd-da30-8332-9ab1-c052276b65fa)
 
 <p align="right"><a href="#table-of-contents">Back to Top ⬆️</a></p>
 
