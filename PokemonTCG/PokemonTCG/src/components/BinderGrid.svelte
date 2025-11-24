@@ -1,16 +1,19 @@
 <script>
   import Card from './Card.svelte';
-
-  // Exporteer de 'cards' prop zodat deze van buitenaf kan worden doorgegeven
   export let cards = [];
+
+  /* Functie om te controleren of er kaarten beschikbaar zijn */
+  function hasCards() {
+    return cards && cards.length > 0;
+  }
 </script>
 
 <!-- Controleer of er kaarten beschikbaar zijn -->
-{#if cards.length > 0}
-  <div class="binder-grid">
-    <!-- Loop over elke kaart in de 'cards' array -->
-    {#each cards as card}
-      <Card {card} />
+{#if hasCards()}
+  <div class="binder-grid" role="list">
+    <!-- Loop over elke kaart en render de Card component -->
+    {#each cards as card, index}
+      <Card card={card} key={index} />
     {/each}
   </div>
 {:else}
