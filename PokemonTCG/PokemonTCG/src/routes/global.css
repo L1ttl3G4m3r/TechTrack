@@ -1,57 +1,111 @@
 /* ------------------------- */
-/* Root variabelen voor thema */
+/* Root variables for theme */
 /* ------------------------- */
 :root {
-  --body-bg: red;
-  --text-color: white;
-  --card-border: #ffd700;
-  --card-bg: red;
-  --card-radius: 2rem;
-  --card-glow: #ffea00;
-  --button-bg: white;
-  --button-color: black;
-  --button-hover-bg: #ffd700;
+  --body-bg: #0a0f25; /* Dark blue */
+  --text-color: #ffffff;
+  --button-bg: #ffffff;
+  --button-color: #000000;
+  --button-hover-bg: #a3d4ff; /* light blue hover */
   --overlay-bg: rgba(0, 0, 0, 0.9);
+  --header-font: 'Montserrat', sans-serif; /* Bold header font */
+  --body-font: 'Arial', sans-serif; /* Normal body font */
 }
 
 /* ------------------------- */
-/* Reset & body styling */
+/* Import Google Fonts */
+/* ------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+/* ------------------------- */
+/* Reset & Base Styling */
 /* ------------------------- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  font-family: var(--body-font);
   color: var(--text-color);
 }
 
 body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background-color: var(--body-bg);
-  text-align: center; /* standaard links uitlijnen */
+  color: var(--text-color);
+  font-family: var(--body-font);
+  text-align: center;
+  overflow-x: hidden; /* allow vertical scrolling */
+  overflow-y: auto;
+  position: relative;
+  cursor: default;
 }
 
-ul, ol {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-  text-align: start;
+/* Paragraph spacing */
+p {
+  margin: 1rem 0;
 }
 
 /* ------------------------- */
-/* Containers & Grid Layouts */
+/* Header Styling */
 /* ------------------------- */
-.background,
-.binder-background,
-.text-content {
-  display: grid;
-  place-items: center;
+.text-content h1 {
+  font-family: var(--header-font);
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+/* ------------------------- */
+/* Card Styling & Glow Removed */
+/* ------------------------- */
+.card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 1rem;
+  border-radius: 0;
+}
+
+.card img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.card-detail__caption  {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #a3d4ff;
+  font-family: var(--header-font);
+  margin-top: 0.5rem;
+}
+
+.card-detail__info {
+  font-family: var(--body-font);
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-detail__attribute {
+  margin: 0.2rem;
+}
+
+/* Remove existing glow */
+.card__glow,
+.glow {
+  display: none;
+}
+
+/* ------------------------- */
+/* Binder & Grid Layouts */
+/* ------------------------- */
 .binder-background,
 .text-content {
+  display: flex;
   flex-direction: column;
+  align-items: center;
   padding: 2rem;
   position: relative;
 }
@@ -66,74 +120,32 @@ ul, ol {
   margin-top: 2rem;
 }
 
-/* ------------------------- */
-/* Paragraaf styling voor spacing */
-/* ------------------------- */
-article p {
-  margin-bottom: 1rem;
-  line-height: 1rem;
+.binder-logic .controls {
+  display: flex;
+  justify-content: center; /* center horizontally */
+  align-items: center;
+  gap: 1rem; /* space between ℹ️ and 📊 buttons */
+  margin: 1rem 0;
 }
 
-/* ------------------------- */
-/* Algemene Card Styling & Glow */
-/* ------------------------- */
-.card {
-  position: relative;
-  padding: 1rem;
-  border-radius: var(--card-radius);
-  border: 6px solid var(--card-border);
-  background: var(--card-bg);
-  overflow: visible;
-}
-
-.card img {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-.card-detail__caption {
+.binder-logic .controls button {
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
   font-weight: bold;
+  background: #ffffff;
+  color: #000000;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
-.card__glow,
-.glow {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--card-radius);
-  border: 6px solid var(--card-glow);
-  animation: glowPulse 3s ease-in-out infinite alternate;
-  pointer-events: none;
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.9; border-color: var(--card-glow); }
-  50% { opacity: 1; border-color: #ffe066; }
+.binder-logic .controls button:hover {
+  background: #a3d4ff; /* light blue hover */
+  color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
 /* ------------------------- */
-/* Tekst content (Header, Footer) */
-/* ------------------------- */
-.text-content {
-  gap: 1.5rem;
-  z-index: 1;
-}
-
-.text-content h1 {
-  font-size: 3rem;
-  font-weight: bold;
-  text-shadow: 0 0 10px var(--card-border);
-}
-
-.text-content p,
-.text-content #copyright {
-  font-size: 1rem;
-  text-shadow: 0 0 10px var(--card-border);
-}
-
-/* ------------------------- */
-/* Buttons, dropdowns & overlay buttons */
+/* Buttons & Dropdowns Styling */
 /* ------------------------- */
 button,
 .overlay-btn,
@@ -142,71 +154,45 @@ select {
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
-  border-radius: 0.5rem;
+  border-radius: 50px; /* pill-shaped */
+  border: none;
+  padding: 0.5rem 1.5rem;
+  font-family: var(--body-font);
 }
 
-/* Alle buttons uniform */
 button,
 .overlay-btn,
 .close-overlay {
   background: var(--button-bg);
   color: var(--button-color);
-  padding: 0.5rem 1rem;
-  border: none;
-  box-shadow: 0 0 10px var(--card-glow);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 button:hover,
 .overlay-btn:hover,
 .close-overlay:hover {
   background: var(--button-hover-bg);
-  color: var(--button-color);
-  box-shadow: 0 0 20px var(--card-glow);
+  color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Select dropdown styling */
 select {
   background: var(--button-bg);
   color: var(--button-color);
   padding: 0.4rem 0.6rem;
-  border-radius: 0.5rem;
-  border: none;
-  box-shadow: 0 0 10px var(--card-glow);
+  border-radius: 50px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
 
 select:hover {
   background: var(--button-hover-bg);
-  box-shadow: 0 0 20px var(--card-glow);
+  color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
 select option {
   color: black;
   background: white;
-}
-
-/* Controls container */
-.controls,
-.sort-dropdown,
-.select-dropdown {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Overlay buttons specifics */
-.overlay-btn,
-.close-overlay {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.overlay-btn {
-  width: 5%;
-  height: 5%;
-  font-size: 1rem;
 }
 
 /* ------------------------- */
@@ -235,7 +221,7 @@ select option {
 }
 
 /* ------------------------- */
-/* Navigatie & Arrows */
+/* Navigation & Arrows */
 /* ------------------------- */
 .pokeball-link {
   position: absolute;
@@ -270,11 +256,11 @@ select option {
   background-color: var(--button-bg);
   border: none;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 50px;
   cursor: pointer;
   font-size: 1.2rem;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 0 10px var(--card-glow);
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 }
 
 .arrow:disabled {
@@ -284,11 +270,11 @@ select option {
 
 .arrow:hover:not(:disabled) {
   background-color: var(--button-hover-bg);
-  box-shadow: 0 0 20px var(--card-glow);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
 }
 
 /* ------------------------- */
-/* RandomCard / Fan (SVG kaarten) */
+/* Fan / SVG Cards (RandomCard) */
 /* ------------------------- */
 .fan-container {
   width: 100%;
@@ -308,4 +294,93 @@ select option {
 .fan-loading__dots {
   display: inline-block;
   width: 36px;
+}
+
+/* ------------------------- */
+/* Tooltip container styling */
+/* ------------------------- */
+.tooltip-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.tooltip-container button {
+  font-size: 1.2rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--button-color);
+  border: none;
+  cursor: pointer;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.tooltip-container button:hover {
+  background: var(--button-hover-bg);
+  color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+.tooltip-content {
+  position: absolute;
+  top: 16rem;
+  left: 20rem;
+  background: rgba(30,30,50,0.95);
+  color: #ffffff;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  max-width: 300px;
+  z-index: 100;
+}
+
+.tooltip-content ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.tooltip-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Optional static icon next to ℹ️ */
+.static-icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 50%;
+  background: var(--button-bg);
+  color: var(--button-color);
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.static-icon:hover {
+  background: var(--button-hover-bg);
+  color: #ffffff;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* ------------------------- */
+/* Mouse-follow glow using ::after */
+/* ------------------------- */
+body::after {
+  content: '';
+  position: fixed; /* fixed prevents scroll issues */
+  top: 0; left: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 80%);
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s ease, opacity 0.3s ease;
+  opacity: 0;
+  z-index: 0;
 }
