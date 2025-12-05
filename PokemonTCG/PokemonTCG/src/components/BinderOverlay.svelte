@@ -21,7 +21,6 @@
     renderChart();             // Render de grafiek na kleur-extractie
   }
 
-  // Reactieve call: laad kleuren zodra kaarten beschikbaar zijn
   $: if (cards?.length) preloadColors();
 
   // =======================
@@ -31,17 +30,15 @@
     if (!svgContainer || !cards.length) return;
 
     const svg = d3.select(svgContainer);
-    svg.selectAll("*").remove();  // Wis vorige inhoud
+    svg.selectAll("*").remove();
 
     const width = Math.min(1000, Math.max(600, containerEl.clientWidth - 40));
     const height = 600;
-    const margin = { top: 70, right: 70, bottom: 70, left: 70 };
+    const margin = { top: 70, right: 70, bottom: 100, left: 80 };
 
     svg.attr("width", width).attr("height", height);
 
-    // =======================
-    // FILTER DATA (LAATSTE 90 DAGEN)
-    // =======================
+    // Filter laatste 90 dagen
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 90);
 
@@ -54,70 +51,109 @@
       }))
       .filter(c => c.history.length);
 
-    if (!series.length) return; // Stop als geen data beschikbaar is
+    if (!series.length) return;
 
-    // =======================
-    // SCHAALEN
-    // =======================
     const allDates = series.flatMap(s => s.history.map(h => new Date(h.date)));
     const allPrices = series.flatMap(s => s.history.map(h => h.marketPrice));
 
+    // Scales
     const x = d3.scaleTime()
       .domain(d3.extent(allDates))
       .range([margin.left, width - margin.right]);
 
     const y = d3.scaleLinear()
-      .domain([0, d3.max(allPrices)])
+      .domain([d3.min(allPrices), d3.max(allPrices)])
       .nice()
       .range([height - margin.bottom, margin.top]);
 
-    // =======================
-    // GRID LINES
-    // =======================
+    // Determine number of ticks you want (same as grid lines)
+    const xTicks = x.ticks(10); // 10 vertical grid lines (adjust as needed)
+    const yTicks = y.ticks(10); // 10 horizontal grid lines (adjust as needed)
+
+    // ----------------------
+    // Grid lines
+    // ----------------------
     svg.append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).tickSize(-(height - margin.top - margin.bottom)).tickFormat(""))
-      .selectAll("line").attr("stroke", "rgba(255,255,255,0.15)");
+      .call(
+        d3.axisBottom(x)
+          .tickValues(xTicks)   // same tick values as axis
+          .tickSize(-(height - margin.top - margin.bottom))
+          .tickFormat("")       // no labels for grid lines
+      )
+      .selectAll("line")
+      .attr("stroke", "rgba(255,255,255,0.15)");
 
     svg.append("g")
       .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).tickSize(-(width - margin.left - margin.right)).tickFormat(""))
-      .selectAll("line").attr("stroke", "rgba(255,255,255,0.15)");
+      .call(
+        d3.axisLeft(y)
+          .tickValues(yTicks)   // same tick values as axis
+          .tickSize(-(width - margin.left - margin.right))
+          .tickFormat("")       // no labels for grid lines
+      )
+      .selectAll("line")
+      .attr("stroke", "rgba(255,255,255,0.15)");
 
-    // =======================
-    // AXES
-    // =======================
+    // ----------------------
+    // Axes with labels
+    // ----------------------
     svg.append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b %d")))
+      .call(
+        d3.axisBottom(x)
+          .tickValues(xTicks)   // same ticks as grid
+          .tickFormat(d3.timeFormat("%d %b"))
+      )
       .selectAll("text")
       .attr("transform", "rotate(-25)")
       .style("text-anchor", "end");
 
     svg.append("g")
       .attr("transform", `translate(${margin.left},0)`)
+      .call(
+        d3.axisLeft(y)
+          .tickValues(yTicks)   // same ticks as grid
+      );
+
+    // X-axis label
+    svg.append("text")
+      .attr("x", (width - margin.left - margin.right)/2 + margin.left)
+      .attr("y", height - margin.bottom + 50)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#fff")
+      .attr("font-size", 14)
+      .text("Datum");
+
+    // Y-axis
+    svg.append("g")
+      .attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y));
 
-    // =======================
-    // LINE GENERATOR
-    // =======================
+    // Y-axis label (€)
+    svg.append("text")
+      .attr("x", -margin.top - (height - margin.top - margin.bottom)/2)
+      .attr("y", margin.left - 50)
+      .attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle")
+      .attr("fill", "#fff")
+      .attr("font-size", 14)
+      .text("€ - Euro");
+
+    // Line generator
     const lineGen = d3.line()
       .x(d => x(new Date(d.date)))
       .y(d => y(d.marketPrice))
       .curve(d3.curveMonotoneX);
 
-    // =======================
-    // GROEPEN PER KAART
-    // =======================
+    // Groups per kaart
     const groups = svg.selectAll(".cardGroup")
       .data(series)
       .enter()
       .append("g")
       .attr("class", "cardGroup");
 
-    // =======================
-    // PATHS + ANIMATIE
-    // =======================
+    // Paths + animatie
     groups.append("path")
       .attr("fill", "none")
       .attr("stroke", d => d._dominantColor)
@@ -129,9 +165,7 @@
       .transition().duration(1500).ease(d3.easeCubicOut)
       .attr("stroke-dashoffset", 0);
 
-    // =======================
-    // TOOLTIP
-    // =======================
+    // Tooltip
     const tooltip = svg.append("g").style("display", "none");
 
     const tipRect = tooltip.append("rect")
@@ -141,17 +175,15 @@
       .attr("y", 65);
 
     const tipName = tooltip.append("text")
-      .attr("fill", "white").attr("font-size", 14).attr("font-weight", "bold").attr("dy", "1em").attr("y", 70);
+      .attr("fill", "white").attr("font-size", 14).attr("font-weight", "bold").attr("dy", "1em").attr("y", 70).attr("x", 5);
 
     const tipPrice = tooltip.append("text")
-      .attr("fill", "white").attr("font-size", 14).attr("dy", "2.5em").attr("y", 70);
+      .attr("fill", "white").attr("font-size", 14).attr("dy", "2.5em").attr("y", 70).attr("x", 5);
 
     const tipImage = tooltip.append("image")
-      .attr("x", 0).attr("y", -20).attr("width", 60).attr("height", 80).attr("rx", 4).attr("ry", 4);
+      .attr("x", -7).attr("y", -60).attr("width", 100).attr("height", 120).attr("rx", 4).attr("ry", 4);
 
-    // =======================
-    // CIRCLES + HOVER EFFECT
-    // =======================
+    // Circles + hover
     groups.each(function(card) {
       d3.select(this).selectAll("circle")
         .data(card.history)
@@ -175,6 +207,8 @@
           tipRect.attr("width", w).attr("height", h);
           tooltip.attr("transform", `translate(${x(new Date(d.date)) + 10}, ${y(d.marketPrice) - h/2})`);
 
+          const leftMargin = 15;
+
           svg.selectAll(".cardGroup path")
             .transition().duration(180)
             .attr("stroke-width", s => s === card ? 4.5 : 2.5)
@@ -197,14 +231,12 @@
         });
     });
 
-    // =======================
-    // GRAFIEK TITEL
-    // =======================
+    // Titel grafiek
     svg.append("text")
       .attr("x", width / 2)
       .attr("y", 35)
       .attr("text-anchor", "middle")
-      .attr("fill", "var(--card-border)")
+      .attr("fill", "#ffffff")
       .attr("font-size", 20)
       .attr("font-weight", "bold")
       .text("Waardeontwikkeling (90 dagen)");

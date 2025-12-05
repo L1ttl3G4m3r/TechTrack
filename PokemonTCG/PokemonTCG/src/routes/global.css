@@ -74,6 +74,24 @@ p {
   border-radius: 8px;
 }
 
+.card-detail__caption  {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #a3d4ff;
+  font-family: var(--header-font);
+  margin-top: 0.5rem;
+}
+
+.card-detail__info {
+  font-family: var(--body-font);
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.card-detail__attribute {
+  margin: 0.2rem;
+}
+
 /* Remove existing glow */
 .card__glow,
 .glow {
